@@ -261,6 +261,17 @@ During the prototyping stage, multiple classification models were evaluated usin
 
 The front-end is built using React.js and Vite, configured with a high-fidelity glassmorphic theme matching the cybersecurity layout.
 
+### 📸 Application Screenshots
+
+#### 1. Interactive Analytics Dashboard
+![Aqualytica Dashboard](08_Documentation/Screenshots/dashboard.png)
+
+#### 2. Split-Layout Login Portal
+![Aqualytica Login](08_Documentation/Screenshots/login.png)
+
+#### 3. Split-Layout Register Portal with Terms Agreement Checkbox
+![Aqualytica Register](08_Documentation/Screenshots/register.png)
+
 ### Advanced Front-End Modules
 
 #### 1. Interactive Liquid Wave Fill Cards

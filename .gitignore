@@ -1,0 +1,57 @@
+# Node.js
+**/node_modules/
+**/dist/
+**/build/
+.npm
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
+**/.ipynb_checkpoints/
+
+# Java Spring Boot
+**/target/
+**/.mvn/
+**/.metadata/
+**/.classpath
+**/.project
+**/.settings/
+**/.factorypath
+**/*.class
+**/*.jar
+**/*.war
+**/*.zip
+**/*.tar.gz
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.next
+**/release.properties
+
+# Large Datasets
+01_Datasets/
+**/*.csv
+**/*.xlsx
+
+# Local Editor settings & IDEs
+.gemini/
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Temporary Screenshots & Media
+.tempmediaStorage/
+*.webp
+/dashboard_spaced.png
+/register_centered.png
+/register_final_centered.png
+/dashboard_extremely_good.png

@@ -412,6 +412,12 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
 
 ### Setup Instructions
 
+#### 0. Clone the Repository
+```bash
+git clone https://github.com/Ganesh40292/aqualytica.git
+cd aqualytica
+```
+
 #### 1. Configure the Database
 1. Launch your local MySQL instance.
 2. Create the target schema:
@@ -538,3 +544,15 @@ Before proposing code merges to the `development` branch, please run the complet
 - **Multi-Node Networks**: Deploying a mesh network of sensor nodes to monitor entire water distribution systems.
 - **Advanced Deep Learning**: Training LSTM models on time-series telemetry to predict contamination events before they occur.
 - **Mobile Client**: Building React Native applications to deliver push notification alerts when anomalies are detected.
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Aqualytica-Water_Quality-blue?style=for-the-badge&logo=water&logoColor=white" alt="Aqualytica Badge" />
+  <img src="https://img.shields.io/badge/Built_With-Spring_Boot_%26_React-green?style=for-the-badge" alt="Tech Stack Badge" />
+</p>
+
+<p align="center">
+  Developed with ❤️ for the Major Engineering Project. <br />
+  <strong>Aqualytica Portal © 2026</strong>. All Rights Reserved.
+</p>

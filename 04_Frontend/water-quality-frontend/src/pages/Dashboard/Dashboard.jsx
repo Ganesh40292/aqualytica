@@ -22,6 +22,7 @@ import {
 
 import { getDashboardStatistics } from "../../services/dashboardService";
 import { getRecentHistory } from "../../services/historyService";
+import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
 
 function Dashboard() {
   const [dashboard, setDashboard] = useState({
@@ -49,6 +50,9 @@ function Dashboard() {
       setLoading(false);
     }
   }, []);
+
+  // Subscribe to instant Supabase Realtime updates
+  useSupabaseRealtime(loadData);
 
   useEffect(() => {
     const timer = setTimeout(() => {

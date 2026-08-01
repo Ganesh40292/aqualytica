@@ -227,7 +227,14 @@ const RegisterForm = ({ onSwitchToLogin, onRegisterSuccess }) => {
         </div>
 
         {/* Google */}
-        <SocialButtons onGoogleClick={() => onSubmit({ fullName: "Google User", email: "google.user@resumeiq.ai" })} />
+        <SocialButtons
+          onSuccess={(data) => {
+            if (onRegisterSuccess) onRegisterSuccess(data);
+          }}
+          onError={(msg) => {
+            console.error("Google register error:", msg);
+          }}
+        />
 
         {/* Switch to Login */}
         <p className="text-center text-base text-slate-500 font-medium">

@@ -55,3 +55,10 @@
 /register_centered.png
 /register_final_centered.png
 /dashboard_extremely_good.png
+
+# Private Credentials & Secrets
+PROJECT_CREDENTIALS_PRIVATE.txt
+.env
+.env.*
+
+

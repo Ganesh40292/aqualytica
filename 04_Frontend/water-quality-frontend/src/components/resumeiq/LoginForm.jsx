@@ -119,7 +119,14 @@ const LoginForm = ({ onSwitchToRegister, onLoginSuccess }) => {
       </div>
 
       {/* Google OAuth */}
-      <SocialButtons onGoogleClick={() => onSubmit({ email: "google.user@resumeiq.ai" })} />
+      <SocialButtons
+        onSuccess={(data) => {
+          if (onLoginSuccess) onLoginSuccess(data);
+        }}
+        onError={(msg) => {
+          console.error("Google login error:", msg);
+        }}
+      />
 
       {/* Switch to Register */}
       <p className="text-center text-base text-slate-500 font-medium">

@@ -45,9 +45,12 @@ from sklearn.metrics import (
 # Configuration
 # =====================================================
 
-DATASET_PATH = "../../02_Machine Learning/Training/Potability_Model_Dataset.csv"
-MODEL_FOLDER = "../../02_Machine Learning/Saved Models"
-RESULTS_FOLDER = "../../08_Documentation/Tables"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
+
+DATASET_PATH = os.path.join(PROJECT_ROOT, "02_Machine Learning", "Training", "Potability_Model_Dataset.csv")
+MODEL_FOLDER = os.path.join(PROJECT_ROOT, "02_Machine Learning", "Saved Models")
+RESULTS_FOLDER = os.path.join(PROJECT_ROOT, "08_Documentation", "Tables")
 
 # =====================================================
 # Step 1: Load Dataset
@@ -69,7 +72,7 @@ print("\n" + "=" * 70)
 print("  STEP 2: Preparing Features")
 print("=" * 70)
 
-df = df.drop(columns=["Dissolved Oxygen", "WQI"])
+df = df.drop(columns=["Dissolved Oxygen", "WQI"], errors="ignore")
 df["Target"] = df["Target"].astype(int)
 
 print(f"  Columns after drop: {df.columns.tolist()}")
@@ -290,6 +293,22 @@ model_results.to_csv(
 )
 print(f"\n  Saved to {RESULTS_FOLDER}/Model_Comparison.csv")
 
+eval_report = pd.DataFrame({
+    "Metric": ["Accuracy", "Precision", "Recall", "F1 Score", "ROC-AUC"],
+    "Score (%)": [
+        round(rf_accuracy * 100, 2),
+        round(rf_precision * 100, 2),
+        round(rf_recall * 100, 2),
+        round(rf_f1 * 100, 2),
+        round(rf_roc_auc * 100, 2)
+    ]
+})
+eval_report.to_csv(
+    os.path.join(RESULTS_FOLDER, "Model_Evaluation_Report.csv"),
+    index=False
+)
+print(f"  Saved to {RESULTS_FOLDER}/Model_Evaluation_Report.csv")
+
 # =====================================================
 # Step 11: Realistic Validation Samples
 # =====================================================
@@ -313,7 +332,7 @@ expected_labels = [
     "Not Potable", "Not Potable", "Not Potable", "Not Potable", "Borderline"
 ]
 
-validation_scaled = scaler.transform(validation_samples)
+validation_scaled = scaler.transform(validation_samples[X.columns])
 val_predictions = rf_model.predict(validation_scaled)
 val_probabilities = rf_model.predict_proba(validation_scaled)
 
@@ -330,10 +349,10 @@ for i in range(len(validation_samples)):
         match = "~"  # borderline, either result acceptable
         pass_count += 1
     elif pred_label == expected:
-        match = "✓"
+        match = "OK"
         pass_count += 1
     else:
-        match = "✗"
+        match = "FAIL"
 
     print(f"  {i+1:<4} {expected:<15} {pred_label:<15} {confidence:>6.2f}%      {match}")
 
@@ -353,11 +372,11 @@ model_path = os.path.join(MODEL_FOLDER, "Water_Potability_RF_Model.pkl")
 scaler_path = os.path.join(MODEL_FOLDER, "Feature_Scaler.pkl")
 
 joblib.dump(rf_model, model_path)
-print(f"  Model saved  → {model_path}")
-print(f"  Model size   → {os.path.getsize(model_path) / (1024*1024):.1f} MB")
+print(f"  Model saved  -> {model_path}")
+print(f"  Model size   -> {os.path.getsize(model_path) / (1024*1024):.1f} MB")
 
 joblib.dump(scaler, scaler_path)
-print(f"  Scaler saved → {scaler_path}")
+print(f"  Scaler saved -> {scaler_path}")
 
 # =====================================================
 # Done
@@ -372,5 +391,5 @@ print(f"""
     2. Restart Flask API
     3. Test via React frontend with the sample:
        pH=7.2, Temp=25, Turb=0.5, TDS=180, Cond=350, Nitrate=4.5, Chloride=120
-       → Should now predict 'Potable'
+       -> Should now predict 'Potable'
 """)

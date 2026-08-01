@@ -150,17 +150,61 @@ function PredictionForm({ onPredictionSuccess }) {
       <div className="bg-slate-900/20 backdrop-blur-3xl border border-slate-800/40 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
-        <div className="flex items-center gap-3.5 mb-8">
-          <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/30 text-cyan-400">
-            <SlidersHorizontal className="w-6 h-6 animate-pulse" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/30 text-cyan-400">
+              <SlidersHorizontal className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-slate-100 tracking-tight">
+                Water Sample Analysis
+              </h2>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                Enter sample parameters for safety evaluation
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-black text-slate-100 tracking-tight">
-              Water Sample Analysis
-            </h2>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-              Enter sample parameters for safety evaluation
-            </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setFormData({
+                  ph: 7.2,
+                  temperature: 20.0,
+                  turbidity: 0.3,
+                  totalDissolvedSolids: 180.0,
+                  conductivity: 300.0,
+                  nitrate: 2.5,
+                  chloride: 80.0
+                });
+                setErrors({});
+                toast.showSuccess("Loaded Safe Drinking Water Preset");
+              }}
+              className="px-3 py-2 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-800/50 text-emerald-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Safe Preset
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setFormData({
+                  ph: 4.5,
+                  temperature: 32.0,
+                  turbidity: 8.5,
+                  totalDissolvedSolids: 1200.0,
+                  conductivity: 1800.0,
+                  nitrate: 28.0,
+                  chloride: 380.0
+                });
+                setErrors({});
+                toast.showWarning("Loaded Contaminated Water Preset");
+              }}
+              className="px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <Info className="w-3.5 h-3.5" /> Unsafe Preset
+            </button>
           </div>
         </div>
 

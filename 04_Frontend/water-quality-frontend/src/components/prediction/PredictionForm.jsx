@@ -29,13 +29,13 @@ function PredictionForm({ onPredictionSuccess }) {
   const [errors, setErrors] = useState({});
 
   const rangeInfo = {
-    ph: "Optimal Range: 6.5 - 8.5 pH",
-    temperature: "Optimal Range: 0.0 - 35.0 °C",
-    turbidity: "Optimal Range: < 5.0 NTU",
-    totalDissolvedSolids: "Optimal Range: < 500 mg/L",
-    conductivity: "Optimal Range: < 1000 µS/cm",
-    nitrate: "Optimal Range: < 10.0 mg/L",
-    chloride: "Optimal Range: < 250.0 mg/L"
+    ph: "Model Safe Range: 6.8 - 7.6 pH (Ideal ~7.2)",
+    temperature: "Model Safe Range: 15.0 - 25.0 °C (Ideal ~20°C)",
+    turbidity: "Model Safe Range: < 1.0 NTU (Critical for Potable)",
+    totalDissolvedSolids: "Model Safe Range: < 250 mg/L (Critical for Potable)",
+    conductivity: "Model Safe Range: < 400 µS/cm (Critical for Potable)",
+    nitrate: "Model Safe Range: < 5.0 mg/L (Ideal ~2.5)",
+    chloride: "Model Safe Range: < 100.0 mg/L (Ideal ~80)"
   };
 
   const validateField = (name, value) => {
@@ -209,6 +209,17 @@ function PredictionForm({ onPredictionSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Quick Model Guidance Notice */}
+          <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/40 text-cyan-200 text-xs flex items-start gap-3">
+            <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-cyan-300">Model Decision Boundary Guidance:</span>
+              <p className="text-slate-300 mt-1">
+                Random Forest evaluates multi-feature combinations. For a guaranteed <b>Potable</b> outcome, click <b className="text-emerald-400">Safe Preset</b> or ensure <b>Turbidity &lt; 1.0 NTU</b>, <b>TDS &lt; 250 mg/L</b>, and <b>Conductivity &lt; 400 µS/cm</b>.
+              </p>
+            </div>
+          </div>
+
           <motion.div
             variants={containerVariants}
             initial="hidden"

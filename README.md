@@ -523,7 +523,7 @@ Aqualytica has recently undergone several system-wide improvements:
 2. **Dashboard Layout Spacing**:
    - Expanded grid gaps (`gap-8` and `gap-10`) and vertical margins (`space-y-12`) to provide a cleaner layout.
    - Adjusted the Water Purity Index status label for safe water from `"Pristine"` to **`"Extremely Good"`**.
-3. **ResumeIQ Authentication Portal**:
+3. **Aqualytica Authentication Portal**:
    - Designed a modern, split-layout auth interface featuring dynamic quotes, centered forms, and large inputs using inline style overrides to bypass rendering bugs.
    - Programmed automated redirects to the dashboard home page immediately upon login and automatically redirect already authenticated users.
    - Integrated custom overlay modals for the **Terms of Service** and **Privacy Policy** documents.

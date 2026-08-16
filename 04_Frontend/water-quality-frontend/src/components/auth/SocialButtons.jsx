@@ -136,7 +136,7 @@ const SocialButtons = ({ onSuccess, onError }) => {
           type="button"
           onClick={handleCustomGoogleClick}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 py-3 px-4 font-bold text-sm shadow-sm transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-3 rounded-xl bg-[#060b16] hover:bg-[#0e172a] border border-slate-700 text-slate-200 py-3 px-4 font-bold text-sm shadow-sm hover:border-cyan-500/50 transition-all cursor-pointer"
         >
           <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
             <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.3 8.8 5 12 5z" />

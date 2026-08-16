@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Layout from "./components/layout/Layout";
 import InitialLoader from "./components/common/InitialLoader";
-import ResumeIQAuthPage from "./pages/ResumeIQ/ResumeIQAuthPage";
+import AuthPage from "./pages/Auth/AuthPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Prediction from "./pages/Prediction/Prediction";
 import Telemetry from "./pages/Telemetry/Telemetry";
@@ -25,7 +25,7 @@ function App() {
   });
 
   useEffect(() => {
-    if (!initializing && isLoggedIn && location.pathname === "/resumeiq") {
+    if (!initializing && isLoggedIn && (location.pathname === "/login" || location.pathname === "/auth")) {
       navigate("/");
     }
   }, [initializing, isLoggedIn, location.pathname, navigate]);
@@ -34,7 +34,7 @@ function App() {
     setIsLoggedIn(true);
     localStorage.setItem("wqms-logged-in", "true");
     if (userData) {
-      localStorage.setItem("wqms-username", userData.username || userData.fullName || "Candidate");
+      localStorage.setItem("wqms-username", userData.username || userData.fullName || "Analyst");
       localStorage.setItem("wqms-email", userData.email || "");
     }
     navigate("/");
@@ -52,7 +52,8 @@ function App() {
       {/* Main App Routes */}
       {!initializing && (
         <Routes location={location} key={location.pathname}>
-          <Route path="/resumeiq" element={<ResumeIQAuthPage onComplete={handleLoginSuccess} />} />
+          <Route path="/login" element={<AuthPage onComplete={handleLoginSuccess} />} />
+          <Route path="/auth" element={<AuthPage onComplete={handleLoginSuccess} />} />
           {isLoggedIn ? (
             <Route
               path="/*"
@@ -77,7 +78,7 @@ function App() {
               }
             />
           ) : (
-            <Route path="*" element={<ResumeIQAuthPage onComplete={handleLoginSuccess} />} />
+            <Route path="*" element={<AuthPage onComplete={handleLoginSuccess} />} />
           )}
         </Routes>
       )}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Lock, Mail, Eye, EyeOff, User, UserPlus, LogIn, Sparkles, Droplets } from "lucide-react";
 import { useToast } from "../../context/ToastContext";
 import { supabase } from "../../lib/supabaseClient";
-import SocialButtons from "../../components/resumeiq/SocialButtons";
+import SocialButtons from "../../components/auth/SocialButtons";
 
 const Login = ({ onLoginSuccess }) => {
   const toast = useToast();

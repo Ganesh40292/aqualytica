@@ -21,9 +21,7 @@ test_cases = [
             "temperature": 22.5,
             "turbidity": 0.80,
             "totalDissolvedSolids": 180.0,
-            "conductivity": 350.0,
-            "nitrate": 2.50,
-            "chloride": 85.0
+            "conductivity": 350.0
         },
         "expected": "Potable"
     },
@@ -34,22 +32,18 @@ test_cases = [
             "temperature": 32.0,
             "turbidity": 8.50,
             "totalDissolvedSolids": 1200.0,
-            "conductivity": 1800.0,
-            "nitrate": 28.0,
-            "chloride": 380.0
+            "conductivity": 1800.0
         },
         "expected": "Not Potable"
     },
     {
-        "name": "Sample 3: High Nitrate & High Chloride Contaminated Water",
+        "name": "Sample 3: Elevated Turbidity & Solids Contaminated Water",
         "data": {
             "ph": 5.80,
             "temperature": 28.2,
             "turbidity": 6.80,
             "totalDissolvedSolids": 850.0,
-            "conductivity": 1400.0,
-            "nitrate": 45.0,
-            "chloride": 420.0
+            "conductivity": 1400.0
         },
         "expected": "Not Potable"
     },
@@ -60,9 +54,7 @@ test_cases = [
             "temperature": 20.0,
             "turbidity": 0.30,
             "totalDissolvedSolids": 150.0,
-            "conductivity": 300.0,
-            "nitrate": 1.80,
-            "chloride": 60.0
+            "conductivity": 300.0
         },
         "expected": "Potable"
     }

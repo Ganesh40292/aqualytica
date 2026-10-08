@@ -31,8 +31,4 @@ public class HistoryResponse {
 
     private Double conductivity;
 
-    private Double nitrate;
-
-    private Double chloride;
-
 }

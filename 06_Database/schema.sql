@@ -4,7 +4,7 @@
 CREATE DATABASE IF NOT EXISTS water_quality_monitoring;
 USE water_quality_monitoring;
 
--- 1. Sensor Data Table (Stores 7 physical parameter inputs)
+-- 1. Sensor Data Table (Stores 5 physical parameter inputs)
 CREATE TABLE IF NOT EXISTS sensor_data (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     ph DOUBLE NOT NULL,
@@ -12,8 +12,6 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     turbidity DOUBLE NOT NULL,
     total_dissolved_solids DOUBLE NOT NULL,
     conductivity DOUBLE NOT NULL,
-    nitrate DOUBLE NOT NULL,
-    chloride DOUBLE NOT NULL,
     created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0950_ai_ci;
 

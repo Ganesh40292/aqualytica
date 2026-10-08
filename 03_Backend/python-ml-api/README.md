@@ -24,7 +24,7 @@ This directory houses the machine learning prediction microservice for **Aqualyt
 ---
 
 ## Machine Learning Pipeline
-1. **Feature Input**: Accepts 9 parameter inputs: pH, Temperature, Turbidity, TDS, Conductivity, Nitrate, Chloride, etc.
+1. **Feature Input**: Accepts 5 parameter inputs: pH, Temperature, Turbidity, TDS, and Conductivity.
 2. **Feature Scaling**: Applies standard normal distribution scaling matching training distribution metrics.
 3. **Random Forest Classification**: Passes inputs through an ensemble of randomized decision trees.
 4. **Probability Score**: Evaluates positive prediction confidence range (0% to 100%).
@@ -37,7 +37,7 @@ This directory houses the machine learning prediction microservice for **Aqualyt
 - **Endpoint**: `GET /`
 - **Output**:
   ```json
-  "Random Forest Model & Scaler Online"
+  "Python ML API is Running Successfully!"
   ```
 
 ### 2. Predict Water Quality Potability
@@ -50,9 +50,7 @@ This directory houses the machine learning prediction microservice for **Aqualyt
     "temperature": 22.5,
     "turbidity": 0.8,
     "totalDissolvedSolids": 180.0,
-    "conductivity": 350.0,
-    "nitrate": 2.5,
-    "chloride": 85.0
+    "conductivity": 350.0
   }
   ```
 - **Response Payload**:

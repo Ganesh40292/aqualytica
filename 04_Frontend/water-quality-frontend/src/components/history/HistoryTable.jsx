@@ -34,18 +34,8 @@ function getRowExplanation(item) {
     reasons.push(`High conductivity (${cond} µS/cm) indicates significant dissolved ionic content, correlating with dissolved impurities and salts.`);
   }
 
-  const nit = Number(item.nitrate);
-  if (nit > 10.0) {
-    reasons.push(`Dangerous nitrate concentration (${nit} mg/L) exceeds the WHO limit of 10 mg/L. High nitrates typically indicate agricultural runoff or sewage.`);
-  }
-
-  const chl = Number(item.chloride);
-  if (chl > 250.0) {
-    reasons.push(`Elevated chloride concentration (${chl} mg/L) exceeds the WHO guideline of 250 mg/L. High chlorides suggest possible sewage or industrial discharge.`);
-  }
-
   if (reasons.length === 0 && isPotable) {
-    reasons.push("All measured parameters fall within WHO-recommended safe ranges. The Random Forest model found no anomalous patterns across the 7 input features.");
+    reasons.push("All measured parameters fall within WHO-recommended safe ranges. The Random Forest model found no anomalous patterns across the 5 input features.");
   }
 
   const recommendation = isPotable
@@ -154,8 +144,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
     if (filteredHistory.length === 0) return;
     const headers = [
       "ID", "pH", "Temp (°C)", "Turbidity (NTU)", "TDS (mg/L)", 
-      "Conductivity (µS/cm)", "Nitrate (mg/L)", "Chloride (mg/L)", 
-      "Verdict", "Confidence (%)", "Timestamp"
+      "Conductivity (µS/cm)", "Verdict", "Confidence (%)", "Timestamp"
     ];
     const rows = filteredHistory.map((item) => [
       item.id,
@@ -164,8 +153,6 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
       item.turbidity?.toFixed(2),
       item.totalDissolvedSolids?.toFixed(0),
       item.conductivity?.toFixed(0),
-      item.nitrate?.toFixed(2),
-      item.chloride?.toFixed(2),
       item.prediction,
       item.confidence,
       item.predictedAt ? new Date(item.predictedAt).toLocaleString() : "N/A"
@@ -442,22 +429,6 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                       ${item.conductivity < 1000 ? "Safe" : "High Conductivity"}
                     </td>
                   </tr>
-                  <tr>
-                    <td>Nitrate Concentration</td>
-                    <td>${item.nitrate?.toFixed(2)} mg/L</td>
-                    <td>&lt; 10.00 mg/L</td>
-                    <td class="${item.nitrate < 10.0 ? "badge-safe" : "badge-anomaly"}">
-                      ${item.nitrate < 10.0 ? "Safe" : "Dangerous Elevation"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Chloride Concentration</td>
-                    <td>${item.chloride?.toFixed(2)} mg/L</td>
-                    <td>&lt; 250.00 mg/L</td>
-                    <td class="${item.chloride < 250.0 ? "badge-safe" : "badge-anomaly"}">
-                      ${item.chloride < 250.0 ? "Safe" : "Excessive Chloride"}
-                    </td>
-                  </tr>
                 </tbody>
               </table>
 
@@ -692,8 +663,6 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
               <th className="p-4 cursor-pointer hover:text-slate-200" onClick={() => handleSort("conductivity")}>
                 Cond <ArrowUpDown className="w-3 h-3 inline ml-1" />
               </th>
-              <th className="p-4">Nitrate</th>
-              <th className="p-4">Chloride</th>
               <th className="p-4 cursor-pointer hover:text-slate-200" onClick={() => handleSort("prediction")}>
                 Verdict <ArrowUpDown className="w-3 h-3 inline ml-1" />
               </th>
@@ -709,7 +678,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
           <tbody className="divide-y divide-slate-800/40 text-sm font-medium text-slate-300">
             {paginatedHistory.length === 0 ? (
               <tr>
-                <td colSpan={12} className="p-8 text-center text-slate-500 font-semibold">
+                <td colSpan={10} className="p-8 text-center text-slate-500 font-semibold">
                   No evaluation records match the filter query
                 </td>
               </tr>
@@ -743,8 +712,6 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                       <td className="p-4">{item.turbidity?.toFixed(2)}</td>
                       <td className="p-4">{item.totalDissolvedSolids?.toLocaleString()}</td>
                       <td className="p-4">{item.conductivity?.toLocaleString()}</td>
-                      <td className="p-4">{item.nitrate?.toFixed(2)}</td>
-                      <td className="p-4">{item.chloride?.toFixed(2)}</td>
                       <td className="p-4">
                         <StatusBadge prediction={item.prediction} />
                       </td>
@@ -765,7 +732,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                     <AnimatePresence>
                       {isExpanded && (
                         <tr>
-                          <td colSpan={12} className="p-0 bg-slate-950/45 border-t border-b border-slate-900">
+                          <td colSpan={10} className="p-0 bg-slate-950/45 border-t border-b border-slate-900">
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
@@ -787,15 +754,13 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                                 </div>
 
                                 {/* Sensor Values Grid */}
-                                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                   {[
                                     { label: "pH Level", val: item.ph?.toFixed(2), unit: "pH", min: 6.5, max: 8.5 },
                                     { label: "Temperature", val: `${item.temperature?.toFixed(1)}°`, unit: "C", min: 20, max: 30 },
                                     { label: "Turbidity", val: item.turbidity?.toFixed(2), unit: "NTU", min: 0, max: 1 },
                                     { label: "TDS", val: item.totalDissolvedSolids?.toLocaleString(), unit: "mg/L", min: 0, max: 500 },
-                                    { label: "Conductivity", val: item.conductivity?.toLocaleString(), unit: "µS/cm", min: 200, max: 800 },
-                                    { label: "Nitrate", val: item.nitrate?.toFixed(2), unit: "mg/L", min: 0, max: 10 },
-                                    { label: "Chloride", val: item.chloride?.toFixed(2), unit: "mg/L", min: 0, max: 250 }
+                                    { label: "Conductivity", val: item.conductivity?.toLocaleString(), unit: "µS/cm", min: 200, max: 800 }
                                   ].map((s) => {
                                     // simple boundary check
                                     const numVal = parseFloat(s.val?.replace(/[^0-9.]/g, ""));

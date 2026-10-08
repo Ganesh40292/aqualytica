@@ -72,7 +72,7 @@ print("\n" + "=" * 70)
 print("  STEP 2: Preparing Features")
 print("=" * 70)
 
-df = df.drop(columns=["Dissolved Oxygen", "WQI"], errors="ignore")
+df = df.drop(columns=["Dissolved Oxygen", "WQI", "Nitrate", "Chloride"], errors="ignore")
 df["Target"] = df["Target"].astype(int)
 
 print(f"  Columns after drop: {df.columns.tolist()}")
@@ -322,9 +322,7 @@ validation_samples = pd.DataFrame({
     "Temperature":             [25,  22,  20,  28,  18,  35,   32,   40,   30,   26 ],
     "Turbidity":               [0.5, 0.3, 0.1, 0.8, 0.2, 8.0,  6.5,  10.0, 4.0,  3.5],
     "Total Dissolved Solids":  [180, 200, 150, 250, 180, 1500, 1200, 2000, 800,  700],
-    "Conductivity":            [350, 400, 300, 420, 380, 1800, 1500, 2500, 1000, 900],
-    "Nitrate":                 [4.5, 3.0, 2.0, 5.0, 3.5, 25.0, 18.0, 30.0, 12.0, 9.0],
-    "Chloride":                [120, 100, 80,  150, 110, 400,  350,  500,  280,  200]
+    "Conductivity":            [350, 400, 300, 420, 380, 1800, 1500, 2500, 1000, 900]
 })
 
 expected_labels = [
@@ -378,18 +376,26 @@ print(f"  Model size   -> {os.path.getsize(model_path) / (1024*1024):.1f} MB")
 joblib.dump(scaler, scaler_path)
 print(f"  Scaler saved -> {scaler_path}")
 
+# Also sync to python-ml-api/models directory
+FLASK_MODEL_FOLDER = os.path.join(PROJECT_ROOT, "03_Backend", "python-ml-api", "models")
+os.makedirs(FLASK_MODEL_FOLDER, exist_ok=True)
+flask_model_path = os.path.join(FLASK_MODEL_FOLDER, "Water_Potability_RF_Model.pkl")
+flask_scaler_path = os.path.join(FLASK_MODEL_FOLDER, "Feature_Scaler.pkl")
+import shutil
+shutil.copy(model_path, flask_model_path)
+shutil.copy(scaler_path, flask_scaler_path)
+print(f"  Synced model & scaler to Flask directory -> {FLASK_MODEL_FOLDER}")
+
 # =====================================================
 # Done
 # =====================================================
 
 print("\n" + "=" * 70)
-print("  RETRAINING COMPLETE")
+print("  RETRAINING COMPLETE (5 PARAMETERS)")
 print("=" * 70)
 print(f"""
-  Next steps:
-    1. Copy the new .pkl files to Flask models/ directory
-    2. Restart Flask API
-    3. Test via React frontend with the sample:
-       pH=7.2, Temp=25, Turb=0.5, TDS=180, Cond=350, Nitrate=4.5, Chloride=120
-       -> Should now predict 'Potable'
+  Features used (5): pH, Temperature, Turbidity, Total Dissolved Solids, Conductivity
+  Models synced to:
+    - {MODEL_FOLDER}
+    - {FLASK_MODEL_FOLDER}
 """)

@@ -42,10 +42,6 @@ public class PredictionServiceImpl implements PredictionService {
 
                 .conductivity(request.getConductivity())
 
-                .nitrate(request.getNitrate())
-
-                .chloride(request.getChloride())
-
                 .build();
 
         sensorData = sensorDataRepository.save(sensorData);

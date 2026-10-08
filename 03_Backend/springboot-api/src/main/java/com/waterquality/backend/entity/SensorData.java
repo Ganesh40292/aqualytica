@@ -36,12 +36,6 @@ public class SensorData {
     private Double conductivity;
 
     @Column(nullable = false)
-    private Double nitrate;
-
-    @Column(nullable = false)
-    private Double chloride;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

@@ -75,12 +75,6 @@ public class HistoryServiceImpl implements HistoryService {
                 .conductivity(
                         history.getSensorData().getConductivity())
 
-                .nitrate(
-                        history.getSensorData().getNitrate())
-
-                .chloride(
-                        history.getSensorData().getChloride())
-
                 .build();
 
     }

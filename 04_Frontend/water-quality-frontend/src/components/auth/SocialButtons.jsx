@@ -109,7 +109,7 @@ const SocialButtons = ({ onSuccess, onError }) => {
                   profilePicture: info.picture
                 });
               }
-            } catch (err) {
+            } catch {
               if (onError) onError("Google profile fetch failed.");
             } finally {
               setLoading(false);

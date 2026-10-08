@@ -12,7 +12,7 @@ This directory contains the database schemas, seed datasets, migration scripts, 
 ### 2. Table Layouts
 - **`sensor_data`**: Stores physical metrics received from ESP32 telemetry nodes:
   - `id` (Primary Key)
-  - `ph`, `temperature`, `turbidity`, `total_dissolved_solids`, `conductivity`, `nitrate`, `chloride`
+  - `ph`, `temperature`, `turbidity`, `total_dissolved_solids`, `conductivity`
   - `created_at` (Timestamp)
 - **`prediction_history`**: Stores machine learning output logs matched with sensor data keys:
   - `id` (Primary Key)

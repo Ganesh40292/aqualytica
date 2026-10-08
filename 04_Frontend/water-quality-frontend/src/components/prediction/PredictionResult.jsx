@@ -57,16 +57,6 @@ function generateExplanation(parameters, isPotable) {
     reasons.push(`Conductivity reading (${cond} µS/cm) is approaching the upper safe threshold. This suggests elevated ion concentration that warrants further chemical analysis.`);
   }
 
-  const nit = Number(parameters.nitrate);
-  if (nit > 10.0) {
-    reasons.push(`Dangerous nitrate concentration (${nit} mg/L) exceeds the WHO limit of 10 mg/L. High nitrates typically indicate agricultural runoff or sewage contamination and can cause methemoglobinemia (blue baby syndrome) in infants.`);
-  }
-
-  const chl = Number(parameters.chloride);
-  if (chl > 250.0) {
-    reasons.push(`Elevated chloride concentration (${chl} mg/L) exceeds the WHO guideline of 250 mg/L. High chlorides suggest possible sewage contamination, industrial discharge, or saltwater intrusion, and accelerate pipe corrosion.`);
-  }
-
   const temp = Number(parameters.temperature);
   if (temp > 35.0) {
     reasons.push(`Water temperature (${temp}°C) is above the optimal range. Warm water promotes microbial growth and reduces dissolved oxygen levels, increasing the risk of bacterial contamination.`);
@@ -74,7 +64,7 @@ function generateExplanation(parameters, isPotable) {
 
   // If potable and no issues found
   if (reasons.length === 0 && isPotable) {
-    reasons.push("All measured parameters fall within WHO-recommended safe ranges. The Random Forest model found no anomalous patterns across the 7 input features.");
+    reasons.push("All measured parameters fall within WHO-recommended safe ranges. The Random Forest model found no anomalous patterns across the 5 input features.");
   }
 
   const recommendation = isPotable
@@ -138,20 +128,6 @@ function PredictionResult({ result, parameters, processingTime }) {
       diagnostics.push({ param: "Total Dissolved Solids", value: `${tdsVal} mg/L`, status: "safe", note: "Excellent TDS range." });
     }
 
-    const nitVal = Number(parameters.nitrate);
-    if (nitVal > 10.0) {
-      diagnostics.push({ param: "Nitrate", value: `${nitVal} mg/L`, status: "critical", note: "High Nitrates. Toxicity risk. Treatment: RO." });
-    } else {
-      diagnostics.push({ param: "Nitrate", value: `${nitVal} mg/L`, status: "safe", note: "Safe nitrate levels." });
-    }
-
-    const chlVal = Number(parameters.chloride);
-    if (chlVal > 250.0) {
-      diagnostics.push({ param: "Chloride", value: `${chlVal} mg/L`, status: "critical", note: "High Chlorides. Salty taste. Treatment: RO." });
-    } else {
-      diagnostics.push({ param: "Chloride", value: `${chlVal} mg/L`, status: "safe", note: "Optimal chloride levels." });
-    }
-
     return diagnostics;
   }, [parameters]);
 
@@ -178,18 +154,6 @@ function PredictionResult({ result, parameters, processingTime }) {
     const condVal = Number(parameters.conductivity);
     if (condVal > 800) {
       score -= Math.min(15, ((condVal - 800) / 400) * 6);
-    }
-
-    const nitVal = Number(parameters.nitrate);
-    if (nitVal > 10.0) {
-      score -= 35;
-    } else if (nitVal > 5.0) {
-      score -= 10;
-    }
-
-    const chlVal = Number(parameters.chloride);
-    if (chlVal > 250.0) {
-      score -= 20;
     }
 
     let finalScore = Math.max(15, Math.round(score));

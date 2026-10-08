@@ -5,7 +5,7 @@ Aqualytica is a modern, cyber-themed, end-to-end water quality assessment platfo
 ---
 
 ## 🌌 Platform Overview & Abstract
-Access to safe, potable water is a critical global challenge. Traditional laboratory tests require hours or days to yield safety verdicts. Aqualytica overcomes these delays by deploying a real-time hardware sensing node that continuously streams parameters (pH, TDS, Turbidity, Temperature, Conductivity, Nitrates, and Chlorides) to a centralized database ledger. 
+Access to safe, potable water is a critical global challenge. Traditional laboratory tests require hours or days to yield safety verdicts. Aqualytica overcomes these delays by deploying a real-time hardware sensing node that continuously streams parameters (pH, TDS, Turbidity, Temperature, and Conductivity) to a centralized database ledger. 
 
 Incoming telemetry is processed instantly by a Scikit-Learn Random Forest Classifier that predicts water potability alongside a probability confidence rating. The findings are made accessible through a futuristic glassmorphic console, enabling water safety analytics, instant PDF lab certificate printing, live calibration anomaly simulations, and real-time telemetry monitoring.
 
@@ -161,8 +161,6 @@ void loop() {
     doc["turbidity"] = turbidity;
     doc["totalDissolvedSolids"] = tds;
     doc["conductivity"] = tds * 2.0;
-    doc["nitrate"] = 2.5;
-    doc["chloride"] = 85.0;
 
     String jsonString;
     serializeJson(doc, jsonString);
@@ -190,8 +188,6 @@ Aqualytica uses a MySQL 8.0 instance to log telemetry and predictions. Database 
   - `turbidity` (DOUBLE, Not Null)
   - `total_dissolved_solids` (DOUBLE, Not Null)
   - `conductivity` (DOUBLE, Not Null)
-  - `nitrate` (DOUBLE, Not Null)
-  - `chloride` (DOUBLE, Not Null)
   - `created_at` (TIMESTAMP, Default current_timestamp)
 
 #### 2. Prediction History Table (`prediction_history`)
@@ -215,8 +211,6 @@ CREATE TABLE sensor_data (
     turbidity DOUBLE NOT NULL,
     total_dissolved_solids DOUBLE NOT NULL,
     conductivity DOUBLE NOT NULL,
-    nitrate DOUBLE NOT NULL,
-    chloride DOUBLE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -326,9 +320,7 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
     "temperature": 23.4,
     "turbidity": 1.45,
     "totalDissolvedSolids": 210.0,
-    "conductivity": 420.0,
-    "nitrate": 3.12,
-    "chloride": 92.50
+    "conductivity": 420.0
   }
   ```
 - **Response**:
@@ -340,8 +332,6 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
     "turbidity": 1.45,
     "totalDissolvedSolids": 210.0,
     "conductivity": 420.0,
-    "nitrate": 3.12,
-    "chloride": 92.50,
     "createdAt": "2026-07-08T17:15:30.294Z"
   }
   ```
@@ -358,8 +348,6 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
       "turbidity": 0.80,
       "totalDissolvedSolids": 180.0,
       "conductivity": 350.0,
-      "nitrate": 2.50,
-      "chloride": 85.00,
       "prediction": "Potable",
       "confidence": 79.29,
       "predictedAt": "2026-07-08T17:10:29.000Z"
@@ -384,9 +372,7 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
     "temperature": 28.20,
     "turbidity": 6.80,
     "totalDissolvedSolids": 620.0,
-    "conductivity": 1150.0,
-    "nitrate": 18.50,
-    "chloride": 320.0
+    "conductivity": 1150.0
   }
   ```
 - **Response**:
@@ -496,8 +482,6 @@ The platform has been validated end-to-end using the following parameters:
   - Turbidity: `0.80` NTU
   - TDS: `180.0` mg/L
   - Conductivity: `350.0` µS/cm
-  - Nitrate: `2.50` mg/L
-  - Chloride: `85.00` mg/L
 - **Outcome**: **POTABLE** (WQI: 100/100, compliant safety ratings, ~79% confidence)
 
 ### 2. Test Case: Acidic/Turbid Anomaly (Not Potable Verdict)
@@ -507,8 +491,6 @@ The platform has been validated end-to-end using the following parameters:
   - Turbidity: `6.80` NTU *(elevated turbidity)*
   - TDS: `620.0` mg/L
   - Conductivity: `1150.0` µS/cm
-  - Nitrate: `18.50` mg/L *(high nitrate levels)*
-  - Chloride: `320.00` mg/L
 - **Outcome**: **NOT POTABLE** (WQI: 15/100, safety limits flagged, ~83.8% confidence)
 
 ---

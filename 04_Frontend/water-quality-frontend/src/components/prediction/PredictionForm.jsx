@@ -16,9 +16,7 @@ function PredictionForm({ onPredictionSuccess }) {
     temperature: "",
     turbidity: "",
     totalDissolvedSolids: "",
-    conductivity: "",
-    nitrate: "",
-    chloride: ""
+    conductivity: ""
   });
 
   const [result, setResult] = useState(null);
@@ -33,9 +31,7 @@ function PredictionForm({ onPredictionSuccess }) {
     temperature: "Model Safe Range: 15.0 - 25.0 °C (Ideal ~20°C)",
     turbidity: "Model Safe Range: < 1.0 NTU (Critical for Potable)",
     totalDissolvedSolids: "Model Safe Range: < 250 mg/L (Critical for Potable)",
-    conductivity: "Model Safe Range: < 400 µS/cm (Critical for Potable)",
-    nitrate: "Model Safe Range: < 5.0 mg/L (Ideal ~2.5)",
-    chloride: "Model Safe Range: < 100.0 mg/L (Ideal ~80)"
+    conductivity: "Model Safe Range: < 400 µS/cm (Critical for Potable)"
   };
 
   const validateField = (name, value) => {
@@ -174,9 +170,7 @@ function PredictionForm({ onPredictionSuccess }) {
                   temperature: 20.0,
                   turbidity: 0.3,
                   totalDissolvedSolids: 180.0,
-                  conductivity: 300.0,
-                  nitrate: 2.5,
-                  chloride: 80.0
+                  conductivity: 300.0
                 });
                 setErrors({});
                 toast.showSuccess("Loaded Safe Drinking Water Preset");
@@ -194,9 +188,7 @@ function PredictionForm({ onPredictionSuccess }) {
                   temperature: 32.0,
                   turbidity: 8.5,
                   totalDissolvedSolids: 1200.0,
-                  conductivity: 1800.0,
-                  nitrate: 28.0,
-                  chloride: 380.0
+                  conductivity: 1800.0
                 });
                 setErrors({});
                 toast.showWarning("Loaded Contaminated Water Preset");

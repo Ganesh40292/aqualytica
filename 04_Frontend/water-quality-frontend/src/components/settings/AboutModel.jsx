@@ -7,13 +7,11 @@ const AboutModel = () => {
   const [isOpen, setIsOpen] = useState(false);
   
   const data = [
-    { name: "pH Level", importance: 28, color: "#06b6d4" },
-    { name: "TDS", importance: 22, color: "#3b82f6" },
-    { name: "Turbidity", importance: 16, color: "#14b8a6" },
-    { name: "Conductivity", importance: 12, color: "#10b981" },
-    { name: "Chloride", importance: 10, color: "#6366f1" },
-    { name: "Nitrate", importance: 8, color: "#a855f7" },
-    { name: "Temperature", importance: 4, color: "#f43f5e" }
+    { name: "pH Level", importance: 34, color: "#06b6d4" },
+    { name: "TDS", importance: 26, color: "#3b82f6" },
+    { name: "Turbidity", importance: 20, color: "#14b8a6" },
+    { name: "Conductivity", importance: 14, color: "#10b981" },
+    { name: "Temperature", importance: 6, color: "#f43f5e" }
   ];
 
   return (

@@ -130,9 +130,7 @@ const Telemetry = () => {
     { title: "Water Temperature", key: "temperature", color: { hex: "#f43f5e", badge: "bg-rose-950/40 border border-rose-800/40 text-rose-400" }, unit: "°C", domain: [10, 40] },
     { title: "Turbidity Index", key: "turbidity", color: { hex: "#14b8a6", badge: "bg-teal-950/40 border border-teal-800/40 text-teal-400" }, unit: "NTU", domain: [0, 10] },
     { title: "Total Dissolved Solids", key: "totalDissolvedSolids", color: { hex: "#3b82f6", badge: "bg-blue-950/40 border border-blue-800/40 text-blue-400" }, unit: "mg/L", domain: [100, 800] },
-    { title: "Electrical Conductivity", key: "conductivity", color: { hex: "#10b981", badge: "bg-emerald-950/40 border border-emerald-800/40 text-emerald-400" }, unit: "µS", domain: [200, 1200] },
-    { title: "Nitrate Concentration", key: "nitrate", color: { hex: "#a855f7", badge: "bg-purple-950/40 border border-purple-800/40 text-purple-400" }, unit: "mg/L", domain: [0, 20] },
-    { title: "Chloride Concentration", key: "chloride", color: { hex: "#6366f1", badge: "bg-indigo-950/40 border border-indigo-800/40 text-indigo-400" }, unit: "mg/L", domain: [100, 400] }
+    { title: "Electrical Conductivity", key: "conductivity", color: { hex: "#10b981", badge: "bg-emerald-950/40 border border-emerald-800/40 text-emerald-400" }, unit: "µS", domain: [200, 1200] }
   ];
 
   return (

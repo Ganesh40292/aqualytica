@@ -35,7 +35,7 @@ const Handbook = () => {
       color: "text-blue-400 bg-blue-950/20 border-blue-900/30",
       optimal: "< 500 mg/L (WHO limit)",
       danger: "TDS > 1000 mg/L (High saturation / saline)",
-      content: "TDS represents the total concentration of dissolved substances in water, primarily calcium, magnesium, sodium, bicarbonates, chlorides, and sulfates. While low TDS water can taste flat, extremely high TDS causes mineral taste, scales pipes, stains fixtures, and can cause laxative effects in sensitive populations. Best neutralized via Reverse Osmosis (RO) filtration systems."
+      content: "TDS represents the total concentration of dissolved substances in water, primarily calcium, magnesium, sodium, bicarbonates, and sulfate minerals. While low TDS water can taste flat, extremely high TDS causes mineral taste, scales pipes, stains fixtures, and can cause laxative effects in sensitive populations. Best neutralized via Reverse Osmosis (RO) filtration systems."
     },
     {
       id: "ml",
@@ -45,7 +45,7 @@ const Handbook = () => {
       color: "text-purple-400 bg-purple-950/20 border-purple-900/30",
       optimal: "Confidence > 80% (High probability classifications)",
       danger: "Confidence < 60% (Marginal thresholds)",
-      content: "Aqualytica uses a Python-trained Random Forest Classifier model. The algorithm processes 9 input parameters (pH, Turbidity, TDS, Conductance, Temperature, Nitrates, Chlorides, etc.) across 3,276 individual samples. By building an ensemble of decision trees, it determines the probability of potability. A verdict is Approved Potable only when the cumulative confidence score surpasses the default 50% threshold."
+      content: "Aqualytica uses a Python-trained Random Forest Classifier model. The algorithm processes 5 core physical and chemical parameters (pH, Temperature, Turbidity, Total Dissolved Solids, and Electrical Conductivity) across 10,000 stratified samples. By building an ensemble of 150 decision trees, it determines the probability of potability. A verdict is Approved Potable only when the cumulative confidence score surpasses the default 50% threshold."
     }
   ];
 

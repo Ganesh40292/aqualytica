@@ -1,0 +1,743 @@
+================================================================================
+          AQUALYTICA: AI-POWERED WATER QUALITY MONITORING SYSTEM
+================================================================================
+               COMPLETE MASTER PROJECT REFERENCE & VIVA GUIDE
+                    (Written in Simple & Clear English)
+================================================================================
+
+PROJECT TITLE: Aqualytica - AI-Powered Water Quality Intelligence Platform
+PROJECT TYPE : Engineering Major Project
+TEAM         : Team 12
+ACADEMIC YEAR: 2025 - 2026
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS:
+--------------------------------------------------------------------------------
+ 1. Project Overview, Problem Statement & Real-World Motivation
+ 2. High-Level Architecture & 8-Step System Data Flow
+ 3. Complete Folder & File Structure (Detailed Directory Breakdown)
+ 4. Hardware Layer & IoT Sensing Node (ESP32 & Sensors)
+ 5. Sensor Calibration Mathematical Formulas
+ 6. Dataset & Data Engineering Details (5 Water Parameters)
+ 7. Machine Learning Engine & Candidate Model Comparative Study
+ 8. Python Flask ML Microservice (Port 5000)
+ 9. Java Spring Boot 3 Middleware Backend (Port 8080)
+10. Cloud Database Layer (Supabase PostgreSQL 17.6)
+11. Frontend Web Dashboard (React + Vite + Tailwind CSS)
+12. Security, Authentication & Google OAuth 2.0 Integration
+13. Complete Step-by-Step Execution & Run Guide
+14. Real-World Test Cases & Verification Scenarios
+15. Most Important & Random Viva / Examiner Questions with Detailed Answers
+    - Category A: Project Concept & High-Level Architecture
+    - Category B: Hardware, Sensors & Microcontroller (IoT)
+    - Category C: Machine Learning, Data Science & Statistics
+    - Category D: Backend, Java Spring Boot & Microservices
+    - Category E: Database, PostgreSQL & Supabase Realtime
+    - Category F: Frontend, UI/UX & Realtime Visualizations
+    - Category G: Security, Authentication & DevOps
+
+================================================================================
+1. PROJECT OVERVIEW, PROBLEM STATEMENT & REAL-WORLD MOTIVATION
+================================================================================
+
+What is Aqualytica?
+Aqualytica is an end-to-end, IoT- and AI-driven automated water quality 
+intelligence station. Instead of taking manual water samples in bottles to an 
+off-site laboratory and waiting 48 to 72 hours for chemical analysis, 
+Aqualytica monitors water continuously in real-time, instantly runs the readings 
+through an Artificial Intelligence (Random Forest) classifier, and predicts 
+whether the water is POTABLE (safe to drink) or NOT POTABLE (unsafe) within 
+seconds.
+
+The Real-World Problem:
+- Over 2 billion people worldwide drink microbiologically or chemically 
+  contaminated water (WHO).
+- Traditional laboratory testing is slow, expensive, labor-intensive, and prone 
+  to sampling delays during monsoons, pipe breaks, or industrial chemical spills.
+- Traditional rule-based threshold testing fails because water safety is governed 
+  by non-linear multi-parameter interactions: water with an acceptable pH can 
+  still be toxic if dissolved solids or turbidity are severely elevated.
+
+The Aqualytica Solution:
+1. Submerges physical sensing probes into water (tanks, wells, rivers, distribution networks).
+2. ESP32 microcontroller digitizes and filters raw analog signals.
+3. Transmits measurements over Wi-Fi to a Java Spring Boot 3 backend.
+4. Python Flask AI microservice evaluates 5 parameters simultaneously:
+   - pH (Acidity / Alkalinity)
+   - Temperature (°C)
+   - Turbidity (NTU)
+   - Total Dissolved Solids - TDS (mg/L)
+   - Electrical Conductivity (µS/cm)
+5. Classifies water safety with confidence percentage.
+6. Stores records in Supabase Cloud PostgreSQL and broadcasts updates over 
+   WebSockets to a modern React web portal in real time.
+
+================================================================================
+2. HIGH-LEVEL ARCHITECTURE & 8-STEP SYSTEM DATA FLOW
+================================================================================
+
+The Aqualytica pipeline follows a robust 4-tier decoupled microservice architecture:
+
+ [Physical Sensors]
+        │ (Analog & Digital Voltages)
+        ▼
+ [ESP32 Microcontroller]  (ADC conversion, smoothing, calibration)
+        │ (HTTP JSON POST via Wi-Fi)
+        ▼
+ [Java Spring Boot 3]     (Port 8080 - Validation, Security, JPA Persistence)
+   ├── Saves raw data ──► [Supabase PostgreSQL 17.6] (Cloud Database)
+   │                           │ (Realtime WebSockets CDC)
+   │ (REST POST /predict)      ▼
+   ▼                      [React Web Portal] (Port 5173 - Live Charts, Gauges)
+ [Python Flask ML API]    (Port 5000 - StandardScaler + Random Forest Classifier)
+   │
+   └── Returns Verdict & Confidence % ──► Spring Boot ──► PostgreSQL History
+
+Step-by-Step Lifecycle of a Water Quality Reading:
+1. Sensing: Probes detect hydrogen ions (pH), optical scatter (Turbidity), 
+   ionic conductivity (TDS & Conductivity), and thermal resistance (Temperature).
+2. Digitization & Calibration: ESP32 converts ADC voltage to scientific units.
+3. Ingestion: ESP32 sends JSON payload to `http://localhost:8080/api/telemetry`.
+4. Persistence (Raw): Spring Boot validates ranges and saves to `sensor_data` table.
+5. AI Evaluation: Spring Boot invokes Flask ML API `http://localhost:5000/predict`.
+   Flask normalizes the 5 inputs using StandardScaler and evaluates them with 
+   Random Forest.
+6. Persistence (Verdict): Spring Boot logs result into `prediction_history` table.
+7. Real-Time Broadcast: Supabase triggers a WebSocket event to connected clients.
+8. Visualization: The React dashboard instantly updates live gauges, liquid 
+   wave cards, line graphs, and notification badges without page reload.
+
+================================================================================
+3. COMPLETE FOLDER & FILE STRUCTURE (DETAILED DIRECTORY BREAKDOWN)
+================================================================================
+
+d:/Projects/Major Project(Google Login)/Major Project/
+│
+├── 01_Datasets/
+│   ├── Master Dataset/
+│   │   ├── Master_Dataset.csv                  (Active 10,000-sample cleaned dataset)
+│   │   └── Versions/
+│   │       ├── Master_Dataset_v7.csv           (Staged version 7 with 5 features)
+│   │       └── Master_Dataset_backup_original.csv (Raw multi-source master backup)
+│   ├── Preprocessed Dataset/
+│   │   └── Master_Dataset_Preprocessed.csv     (Standardized cleaned dataset)
+│   └── Raw Datasets/                           (Original benchmark CSVs from Kaggle/EPA)
+│
+├── 02_Machine Learning/
+│   ├── Notebooks/
+│   │   ├── clean_and_sample_dataset.py         (Data hygiene, target mapping & sampling)
+│   │   ├── retrain_model.py                    (Automated RF trainer & model comparison)
+│   │   ├── test_predictions.py                 (Validation test suite for 5 features)
+│   │   └── *.ipynb                             (Jupyter research & exploration notebooks)
+│   ├── Saved Models/
+│   │   ├── Water_Potability_RF_Model.pkl       (Trained Random Forest binary)
+│   │   └── Feature_Scaler.pkl                  (StandardScaler transformation binary)
+│   ├── Training/
+│   │   └── Potability_Model_Dataset.csv        (Training dataset for model fitting)
+│   └── README.md                               (ML architecture & metrics documentation)
+│
+├── 03_Backend/
+│   ├── python-ml-api/
+│   │   ├── app.py                              (Flask REST microservice on port 5000)
+│   │   ├── requirements.txt                    (Python dependencies: flask, scikit-learn, joblib)
+│   │   ├── models/                             (Active runtime model binaries)
+│   │   │   ├── Water_Potability_RF_Model.pkl
+│   │   │   └── Feature_Scaler.pkl
+│   │   └── README.md                           (Flask endpoints and payload specification)
+│   │
+│   └── springboot-api/
+│       ├── mvnw.cmd / pom.xml                  (Maven build script & Spring Boot 3.x dependencies)
+│       └── src/main/java/com/waterquality/backend/
+│           ├── WaterQualityBackendApplication.java (Spring Boot main runner)
+│           ├── controller/
+│           │   ├── AuthController.java         (Registration, login & Google OAuth endpoints)
+│           │   ├── PredictionController.java   (Telemetry ingestion & prediction REST API)
+│           │   └── HistoryController.java      (Query historical records & exports)
+│           ├── dto/
+│           │   ├── PredictionRequest.java      (5-feature payload DTO)
+│           │   ├── PredictionResponse.java     (Verdict & confidence DTO)
+│           │   ├── HistoryResponse.java        (Record ledger projection DTO)
+│           │   └── AuthDTOs.java               (Login & registration request/responses)
+│           ├── entity/
+│           │   ├── SensorData.java             (JPA entity for raw sensor readings)
+│           │   ├── PredictionHistory.java      (JPA entity for classification outcomes)
+│           │   └── User.java                   (JPA entity for registered analysts)
+│           ├── repository/
+│           │   ├── SensorDataRepository.java
+│           │   ├── PredictionHistoryRepository.java
+│           │   └── UserRepository.java
+│           └── serviceImpl/
+│               ├── PredictionServiceImpl.java  (Orchestrates Flask ML call & saving)
+│               ├── HistoryServiceImpl.java     (Fetches past records with pagination)
+│               └── AuthServiceImpl.java        (BCrypt password hashing & Google JWT validation)
+│
+├── 04_Frontend/
+│   └── water-quality-frontend/
+│       ├── index.html                          (Root HTML template)
+│       ├── package.json / vite.config.js       (Vite build configuration & dependencies)
+│       └── src/
+│           ├── App.jsx / main.jsx              (Routing, theme wrappers & navigation)
+│           ├── constants/
+│           │   └── sensorFields.js             (Field definitions for 5 core parameters)
+│           ├── pages/
+│           │   ├── Dashboard/Dashboard.jsx     (Telemetry gauges, wave cards, WQI score)
+│           │   ├── Prediction/Prediction.jsx   (Manual analysis form, presets, diagnostics)
+│           │   ├── History/History.jsx         (Record ledger, filters, CSV/PDF export)
+│           │   ├── Telemetry/Telemetry.jsx     (Hardware status, calibration simulator)
+│           │   ├── Handbook/Handbook.jsx       (WHO/EPA parameter guides & FAQ)
+│           │   └── Auth/Login.jsx              (Email login & Google OAuth sign-in)
+│           ├── components/
+│           │   ├── dashboard/QuickPredictionWidget.jsx
+│           │   ├── prediction/PredictionForm.jsx
+│           │   ├── prediction/PredictionResult.jsx
+│           │   ├── history/HistoryTable.jsx
+│           │   ├── settings/SensorSimulator.jsx
+│           │   └── telemetry/SensorHealthPanel.jsx
+│           └── services/
+│               ├── api.js                      (Axios client for Spring Boot REST API)
+│               └── supabaseClient.js           (Supabase Realtime WebSocket client)
+│
+├── 05_ESP32/
+│   ├── firmware.ino                            (Arduino/C++ code for ESP32 microcontroller)
+│   └── README.md                               (Circuit diagrams, wiring & pin assignments)
+│
+├── 06_Database/
+│   ├── schema.sql                              (Base PostgreSQL database DDL)
+│   ├── supabase_schema.sql                     (Supabase-specific DDL with RLS policies)
+│   ├── drop_nitrate_chloride.sql               (Migration script removing nitrate/chloride)
+│   └── README.md                               (Database tables, indexes & connection strings)
+│
+├── 07_Research Papers/                         (Referenced IEEE, WHO & Springer academic papers)
+├── 08_Documentation/                           (Comparative algorithm reports, tables & figures)
+├── 09_Presentation/                            (Project PPT slides and presentation assets)
+├── 10_Utilities/                               (Helper scripts for testing and environment setup)
+├── PROJECT_COMPREHENSIVE_GUIDE.txt             (High-level comprehensive summary guide)
+└── README.md                                   (Master repository documentation)
+
+================================================================================
+4. HARDWARE LAYER & IOT SENSING NODE (ESP32 & SENSORS)
+================================================================================
+
+Microcontroller Unit: ESP32 NodeMCU-32S
+- CPU: Tensilica Xtensa Dual-Core 32-bit LX6 running at 240 MHz.
+- Connectivity: 802.11 b/g/n Wi-Fi + Bluetooth v4.2 BR/EDR & BLE.
+- ADC: 12-bit Analog-to-Digital Converter (0 to 4095 discrete resolution).
+- Supply Voltage: 3.3V logic (5V input via Micro-USB or external buck converter).
+
+Sensor Probes Installed:
+1. Analog pH Sensor Probe (pH-4502C):
+   - Principle: Glass electrode generating differential microvolts as H+ ions exchange.
+   - Operating Range: 0.00 – 14.00 pH.
+   - Ideal Drinking Range: 6.50 – 8.50 pH (WHO standard).
+
+2. Total Dissolved Solids (TDS) Sensor Probe:
+   - Principle: Dual titanium electrodes measuring AC electrical conductivity.
+   - Operating Range: 0 – 1,000+ ppm (mg/L).
+   - Ideal Drinking Range: < 300 mg/L (Pristine) / < 500 mg/L (Acceptable).
+
+3. Optical Turbidity Sensor (TS-300B):
+   - Principle: Emits 940 nm infrared light; a phototransistor measures light 
+     scattering caused by suspended particles (clay, silt, algae).
+   - Operating Range: 0 – 100 NTU (Nephelometric Turbidity Units).
+   - Ideal Drinking Range: < 1.0 NTU (Target) / < 5.0 NTU (Permissible limit).
+
+4. DS18B20 Waterproof Digital Temperature Probe:
+   - Principle: Silicon semiconductor sensor in a stainless-steel capsule.
+   - Protocol: Dallas 1-Wire protocol (accurate up to ±0.5°C without ADC noise).
+   - Operating Range: -55°C to +125°C.
+
+5. Electrical Conductivity:
+   - Principle: Measures the flow of electrical current through dissolved ions.
+   - Unit: µS/cm (micro-Siemens per centimeter).
+
+================================================================================
+5. SENSOR CALIBRATION MATHEMATICAL FORMULAS
+================================================================================
+
+1. pH Sensor Calibration Formula:
+   V_in = (ADC_Reading / 4095.0) * 3.3V
+   pH = 7.0 + ((V_neutral - V_in) / Slope)
+   Typical calibration values: V_neutral ≈ 2.50V, Slope ≈ 0.18 V/pH.
+
+2. TDS Calculation Formula:
+   V_tds = (ADC_Reading / 4095.0) * 3.3V
+   V_comp = V_tds / (1.0 + 0.02 * (Temperature - 25.0))   (Temperature compensation)
+   TDS_ppm = (133.42 * V_comp^3 - 255.86 * V_comp^2 + 857.39 * V_comp) * 0.5
+
+3. Turbidity Calibration Formula:
+   V_turb = (ADC_Reading / 4095.0) * 5.0V (or 3.3V with voltage divider)
+   NTU = -1120.4 * (V_turb^2) + 5742.3 * V_turb - 4352.9
+   (Constrained: NTU < 0 clamped to 0.0; V_turb > 4.2V = 0 NTU clean water).
+
+================================================================================
+6. DATASET & DATA ENGINEERING DETAILS (5 WATER PARAMETERS)
+================================================================================
+
+Master Dataset Composition:
+- Source: Harmonized water potability benchmark datasets (Kaggle & EPA reference data).
+- Total Cleaned Records: 10,000 samples.
+- Target Variable: Binary potability indicator:
+  - 1 = Potable (Safe for drinking)
+  - 0 = Not Potable (Contaminated / Unsafe)
+
+The 5 Core Features Evaluated:
+1. pH                        : Range 0.0 to 14.0 (Typical drinking: 6.5 – 8.5)
+2. Temperature (°C)          : Range 5.0 to 45.0 °C
+3. Turbidity (NTU)           : Range 0.0 to 20.0+ NTU (Safe: < 5.0 NTU)
+4. Total Dissolved Solids    : Range 0 to 2,000 mg/L (Safe: < 500 mg/L)
+5. Electrical Conductivity   : Range 0 to 2,500 µS/cm
+
+Data Preprocessing Pipeline:
+1. Missing Value Imputation: Dropped anomalous records with missing physical values.
+2. Deduplication: Filtered identical sensor vectors.
+3. Outlier Clipping: Checked physical plausibility (e.g., pH within 0-14, Temp > 0°C).
+4. Stratified Sampling: Balanced distribution preserving class proportions across 
+   10,000 instances.
+5. Feature Scaling: Fitted with `StandardScaler` (z = (x - mean) / std), ensuring 
+   zero mean and unit variance so high-magnitude features (TDS in hundreds) 
+   do not overpower subtle features (pH in units).
+
+================================================================================
+7. MACHINE LEARNING ENGINE & CANDIDATE MODEL COMPARATIVE STUDY
+================================================================================
+
+Why Random Forest Won:
+Water potability classification involves non-linear decision boundaries. 
+For example, a sample with high TDS might be safe if mineral composition is 
+normal, but unsafe if combined with high turbidity or abnormal pH. 
+Single decision trees overfit to training noise, while linear classifiers 
+(Logistic Regression) cannot model cross-feature interactions. 
+Random Forest builds an ensemble of 150 diverse decision trees, each trained on 
+bootstrap subsets, aggregating their votes to produce reliable predictions.
+
+Algorithm Comparison Benchmark on 5 Parameters (10,000 Samples):
+--------------------------------------------------------------------------------
+Model Candidate             | Accuracy (%) | F1-Score | Status
+----------------------------|--------------|----------|-------------------------
+Random Forest (Selected)    | 82.60%       | 88.71%   | APPROVED (Best Overall)
+K-Nearest Neighbors (KNN)   | 81.05%       | 87.20%   | Rejected (Higher Latency)
+Gaussian Naive Bayes        | 80.40%       | 86.80%   | Rejected (Independence assumption)
+Logistic Regression         | 78.40%       | 85.10%   | Rejected (Underfitting)
+Decision Tree (Single CART) | 75.30%       | 82.40%   | Rejected (High Variance)
+--------------------------------------------------------------------------------
+
+Hyperparameters of Trained Random Forest:
+- `n_estimators`: 150 trees
+- `criterion`: Gini impurity
+- `max_depth`: 15
+- `min_samples_split`: 5
+- `class_weight`: "balanced" (prevents majority class bias)
+- `random_state`: 42 (ensures deterministic reproducibility)
+
+Model Persistence:
+The trained estimator is serialized using `joblib` as:
+- `Water_Potability_RF_Model.pkl` (The Forest of 150 Trees)
+- `Feature_Scaler.pkl` (The 5-parameter mean and standard deviation vectors)
+
+================================================================================
+8. PYTHON FLASK ML MICROSERVICE (PORT 5000)
+================================================================================
+
+File: `03_Backend/python-ml-api/app.py`
+Runtime: Python 3.12 / 3.14
+
+Key REST Endpoints:
+1. `GET /health`:
+   Returns service status, loaded model type, and feature count (5).
+2. `POST /predict`:
+   Accepts JSON payload:
+   {
+     "ph": 7.20,
+     "temperature": 24.50,
+     "turbidity": 0.35,
+     "totalDissolvedSolids": 180.0,
+     "conductivity": 310.0
+   }
+   Processing Steps:
+   1. Validates presence and types of all 5 fields.
+   2. Creates numpy array in fixed order: [ph, temperature, turbidity, tds, conductivity].
+   3. Applies `scaler.transform(features)`.
+   4. Calls `model.predict(scaled)` and `model.predict_proba(scaled)`.
+   5. Returns JSON response:
+   {
+     "potability": "Potable",
+     "confidence": 90.27,
+     "status": "success"
+   }
+
+================================================================================
+9. JAVA SPRING BOOT 3 MIDDLEWARE BACKEND (PORT 8080)
+================================================================================
+
+Framework: Spring Boot 3.x (Java 17 / 21)
+Build Tool: Maven (`mvnw`)
+Location: `03_Backend/springboot-api/`
+
+Architecture & Component Roles:
+1. `PredictionController.java`:
+   - Endpoint: `POST /api/telemetry` & `POST /api/predict`.
+   - Accepts incoming sensor JSON, validates numeric boundary rules.
+2. `PredictionServiceImpl.java`:
+   - Saves raw reading to `sensor_data` table via `SensorDataRepository`.
+   - Constructs HTTP request and calls Flask ML service (`http://localhost:5000/predict`).
+   - Parses ML verdict and confidence score.
+   - Saves prediction to `prediction_history` table via `PredictionHistoryRepository`.
+   - Returns consolidated response to caller.
+3. `HistoryController.java` & `HistoryServiceImpl.java`:
+   - Endpoint: `GET /api/history`.
+   - Retrieves historical test ledger with sorting, filtering, and pagination.
+4. `AuthController.java` & `AuthServiceImpl.java`:
+   - Handles local user sign-up/login with BCrypt hashing.
+   - Validates Google OAuth ID Tokens via Google API client libraries.
+5. Database Connection Pooling:
+   - Configured via HikariCP connecting to Supabase Cloud PostgreSQL on port 5432.
+
+================================================================================
+10. CLOUD DATABASE LAYER (SUPABASE POSTGRESQL 17.6)
+================================================================================
+
+Hosted On: Supabase (AWS Region ap-south-1 Mumbai)
+Database Engine: PostgreSQL 17.6
+
+Primary Tables:
+1. `sensor_data`:
+   Columns:
+   - `id` (BIGSERIAL PRIMARY KEY)
+   - `ph` (DOUBLE PRECISION)
+   - `temperature` (DOUBLE PRECISION)
+   - `turbidity` (DOUBLE PRECISION)
+   - `total_dissolved_solids` (DOUBLE PRECISION)
+   - `conductivity` (DOUBLE PRECISION)
+   - `created_at` (TIMESTAMPTZ DEFAULT NOW())
+
+2. `prediction_history`:
+   Columns:
+   - `id` (BIGSERIAL PRIMARY KEY)
+   - `sensor_data_id` (BIGINT REFERENCES sensor_data(id) ON DELETE CASCADE)
+   - `prediction` (VARCHAR(30) - 'Potable' / 'Not Potable')
+   - `confidence` (DOUBLE PRECISION - percentage)
+   - `predicted_at` (TIMESTAMPTZ DEFAULT NOW())
+
+3. `users`:
+   Columns:
+   - `id` (BIGSERIAL PRIMARY KEY)
+   - `username` (VARCHAR(100) UNIQUE)
+   - `email` (VARCHAR(150) UNIQUE)
+   - `password` (VARCHAR(255))
+   - `google_id` (VARCHAR(255))
+   - `profile_picture` (TEXT)
+   - `auth_provider` (VARCHAR(50) - 'LOCAL' or 'GOOGLE')
+   - `created_at` (TIMESTAMPTZ DEFAULT NOW())
+
+Supabase Realtime Engine:
+- PostgreSQL publication `supabase_realtime` is enabled on `sensor_data` and 
+  `prediction_history`.
+- Any `INSERT` statement automatically generates a JSON payload pushed via 
+  WebSockets to subscribed web clients.
+
+================================================================================
+11. FRONTEND WEB DASHBOARD (REACT + VITE + TAILWIND CSS)
+================================================================================
+
+Framework: React 18 / 19 with Vite 8 bundler
+Styling: Tailwind CSS + Custom Dark Theme Glassmorphism + Framer Motion
+Location: `04_Frontend/water-quality-frontend/`
+
+Key Visual & Functional Features:
+1. Liquid Wave Fill Sensor Cards:
+   - HTML5 `<canvas>` rendering two sine waves in a `requestAnimationFrame` loop.
+   - Water level dynamically rises or falls matching parameter values.
+   - Colors adapt: Cyan/Teal for safe, Red/Amber for danger thresholds.
+2. Water Purity Index (WQS) Circular Gauge:
+   - Aggregates the 5 parameters into a composite health score (0 to 100%).
+3. Real-Time Telemetry & Line Charts:
+   - Powered by Recharts with live WebSocket streaming updates.
+4. Water Sample Analysis (Prediction Form):
+   - Interactive sliders for the 5 parameters.
+   - Quick 'Safe Preset' and 'Unsafe Preset' one-click testing buttons.
+   - WHO safety range badges on every slider.
+5. Record Ledger & History Table:
+   - Full history of all historical water analyses.
+   - Advanced filters (status, confidence slider, date pickers).
+   - Instant CSV export and printable double-bordered Official Lab Certificate.
+6. Water Safety Handbook:
+   - Interactive WHO/EPA parameter encyclopedia with expandable accordion cards.
+
+================================================================================
+12. SECURITY, AUTHENTICATION & GOOGLE OAUTH 2.0 INTEGRATION
+================================================================================
+
+Authentication Modes:
+1. Local Database Authentication:
+   - Passwords salted and hashed with BCrypt (strength 10).
+   - Plaintext passwords never stored or logged.
+2. Google OAuth 2.0 (Google Identity Services):
+   - Secure one-tap or branded button sign-in.
+   - Frontend obtains cryptographically signed ID Token (JWT) from Google.
+   - Backend validates signature against Google public keys.
+   - Verified email and profile details securely linked in PostgreSQL.
+
+Data Protection:
+- All sensitive database passwords and OAuth secrets are stored in `.env` 
+  and ignored by Git via `.gitignore`.
+
+================================================================================
+13. COMPLETE STEP-BY-STEP EXECUTION & RUN GUIDE
+================================================================================
+
+To run the entire Aqualytica project locally:
+
+Step 1: Start Python Flask ML Microservice (Port 5000)
+   cd "03_Backend/python-ml-api"
+   python app.py
+   (Verifies model loading: http://localhost:5000/health)
+
+Step 2: Start Java Spring Boot Middleware (Port 8080)
+   cd "03_Backend/springboot-api"
+   ./mvnw.cmd spring-boot:run
+   (Verifies backend startup on port 8080)
+
+Step 3: Start React Vite Frontend (Port 5173)
+   cd "04_Frontend/water-quality-frontend"
+   npm run dev
+   (Open browser at: http://localhost:5173)
+
+Step 4: (Optional) Connect ESP32 Hardware
+   - Flash `05_ESP32/firmware.ino` using Arduino IDE with Wi-Fi credentials.
+   - The device automatically sends telemetry packets to port 8080 every 10 seconds.
+
+================================================================================
+14. REAL-WORLD TEST CASES & VERIFICATION SCENARIOS
+================================================================================
+
+Test Scenario 1: Ideal Safe Drinking Water (Safe Preset)
+- pH: 7.20
+- Temperature: 22.0 °C
+- Turbidity: 0.30 NTU
+- TDS: 180.0 mg/L
+- Conductivity: 310.0 µS/cm
+Expected Verdict: "Potable" (Confidence: ~90%+)
+
+Test Scenario 2: Severe Muddy & Acidic Contamination (Unsafe Preset)
+- pH: 4.50 (Highly Acidic)
+- Temperature: 32.0 °C
+- Turbidity: 18.50 NTU (Muddy suspension)
+- TDS: 920.0 mg/L (High mineral salt load)
+- Conductivity: 1250.0 µS/cm
+Expected Verdict: "Not Potable" (Confidence: ~85%+ Unsafe)
+
+================================================================================
+15. MOST IMPORTANT & RANDOM VIVA / EXAMINER QUESTIONS WITH DETAILED ANSWERS
+================================================================================
+
+--------------------------------------------------------------------------------
+CATEGORY A: PROJECT CONCEPT & HIGH-LEVEL ARCHITECTURE
+--------------------------------------------------------------------------------
+
+Q1: What is the main objective of your major project?
+A1: The objective of Aqualytica is to develop an automated, low-cost, real-time 
+    water quality monitoring and safety prediction system using IoT sensors, 
+    cloud computing, and Machine Learning. It eliminates the 2-3 day latency 
+    and high cost of traditional laboratory water testing.
+
+Q2: Why did you use a microservice architecture instead of a single monolithic app?
+A2: We divided the system into specialized microservices to leverage language strengths:
+    - Python Flask is the industry leader for Machine Learning with optimized 
+      Scikit-Learn C-extensions.
+    - Java Spring Boot is the enterprise benchmark for secure, multi-threaded 
+      middleware, connection pooling, and business validation.
+    - React + Vite delivers a decoupled, responsive single-page web UI.
+    This separation allows scaling each component independently and prevents an ML 
+    workload from freezing user interface requests.
+
+Q3: What are the 5 water quality parameters monitored by your system?
+A3: 1. pH (Hydrogen ion concentration / acidity-alkalinity)
+    2. Water Temperature (°C)
+    3. Turbidity (Clarity / suspended solids in NTU)
+    4. Total Dissolved Solids - TDS (Dissolved inorganic salts in mg/L)
+    5. Electrical Conductivity (Ionic conductivity in µS/cm)
+
+Q4: Why did you narrow the system down to these 5 specific parameters?
+A4: These 5 parameters represent the primary physical and chemical indicators of 
+    water contamination recommended by WHO and EPA that can be continuously, 
+    reliably, and non-destructively measured in real-time using solid-state 
+    electronic sensors without requiring consumable chemical reagents.
+
+--------------------------------------------------------------------------------
+CATEGORY B: HARDWARE, SENSORS & MICROCONTROLLER (IOT)
+--------------------------------------------------------------------------------
+
+Q5: Why did you choose the ESP32 over an Arduino Uno or Raspberry Pi?
+A5: - Over Arduino Uno: ESP32 has a dual-core 32-bit processor running at 240 MHz 
+      (vs. 8-bit 16 MHz), 520 KB RAM (vs. 2 KB), and native built-in Wi-Fi and 
+      Bluetooth. Arduino Uno requires external shields to connect to Wi-Fi.
+    - Over Raspberry Pi: ESP32 costs a fraction of a Pi, consumes milliwatts of 
+      power (battery/solar deployable), boots instantly, and has native analog ADC pins.
+
+Q6: How does the pH sensor work?
+A6: The pH probe features a thin glass bulb membrane sensitive to hydrogen ions. 
+    When dipped in water, an ion exchange between the internal buffer solution 
+    and the external sample generates a millivolt potential proportional to 
+    hydrogen ion activity, governed by the Nernst equation. This voltage is 
+    amplified and converted to pH (0–14).
+
+Q7: What is the difference between TDS and Turbidity?
+A7: - TDS (Total Dissolved Solids) measures dissolved minerals and salts (calcium, 
+      magnesium, sodium) that are chemically dissolved at the molecular level and 
+      invisible to the naked eye.
+    - Turbidity measures suspended insoluble particles (sand, mud, clay, algae) 
+      that cause cloudiness by scattering light.
+    Water can be crystal clear (low turbidity) yet dangerously salty (high TDS), 
+    or low in TDS yet muddy (high turbidity).
+
+Q8: How do you calibrate the sensors?
+A8: - pH Sensor: Two-point calibration using standard buffer solutions (pH 4.01 and 
+      pH 6.86/7.00) to compute voltage offset and slope.
+    - TDS Sensor: Calibrated against a known 1413 µS/cm standard solution.
+    - Turbidity: Calibrated against distilled water (0 NTU) and a known standard.
+
+Q9: What is the role of the DS18B20 temperature sensor?
+A9: Temperature affects water viscosity, chemical solubility, and electrical 
+    resistance. Because electrical conductivity increases roughly 2% for every 1°C 
+    rise in temperature, temperature readings are used to mathematically compensate 
+    TDS calculations to a standard 25°C baseline.
+
+--------------------------------------------------------------------------------
+CATEGORY C: MACHINE LEARNING, DATA SCIENCE & STATISTICS
+--------------------------------------------------------------------------------
+
+Q10: Why did you select Random Forest over Decision Trees or Logistic Regression?
+A10: - Logistic Regression assumes linear separability, which does not exist in 
+       complex water chemistry.
+     - A single Decision Tree has high variance and easily overfits training noise.
+     - Random Forest builds an ensemble of 150 decorrelated decision trees using 
+       bagging (bootstrap aggregation) and feature subsampling. The majority voting 
+       mechanism smooths out individual tree errors, delivering 82.60% accuracy 
+       and 88.71% F1-score with superior out-of-sample generalization.
+
+Q11: Why didn't you use Deep Learning (e.g., Artificial Neural Networks / CNN)?
+A11: For structured tabular data of 10,000 samples with 5 features, ensemble tree 
+     algorithms consistently match or outperform neural networks without requiring 
+     massive GPU resources or millions of training samples. Random Forest trains 
+     in seconds, has zero risk of vanishing gradients, requires low inference 
+     memory, and predicts in under 1 millisecond.
+
+Q12: Why is Feature Scaling (StandardScaler) necessary?
+A12: Features have drastically different scales: pH is measured between 0 and 14, 
+     while TDS ranges from 100 to 1,500 mg/L, and Conductivity from 100 to 2,500 µS/cm. 
+     StandardScaler normalizes each feature to have a mean of 0 and standard deviation 
+     of 1. This ensures all algorithms (and distance-based comparators) treat features 
+     proportionately without magnitude bias.
+
+Q13: How did you handle dataset class imbalance?
+A13: Water datasets often contain more potable or non-potable samples depending 
+     on source sampling. We used stratified train-test splitting (preserving class 
+     ratios) and configured `class_weight="balanced"` in the Random Forest model, 
+     which automatically weights sample penalties inversely proportional to class frequencies.
+
+Q14: What metrics did you evaluate beyond simple Accuracy?
+A14: We evaluated Precision, Recall, F1-Score, and Confusion Matrix metrics. 
+     In drinking water monitoring, Recall (catching contaminated water) is critical 
+     because a False Negative (classifying toxic water as potable) could poison consumers. 
+     The F1-Score of 88.71% proves strong balance between precision and sensitivity.
+
+--------------------------------------------------------------------------------
+CATEGORY D: BACKEND, JAVA SPRING BOOT & MICROSERVICES
+--------------------------------------------------------------------------------
+
+Q15: What is Spring Boot's role in this project?
+A15: Spring Boot acts as the secure central orchestrator. It exposes REST API 
+     endpoints for IoT devices and users, validates data boundaries, executes 
+     database persistence via JPA/Hibernate, handles user authentication, and 
+     coordinates inference requests to the Flask ML service.
+
+Q16: How does Spring Boot communicate with the Python ML service?
+A16: Through synchronous HTTP REST calls using Spring's `RestTemplate` (or `WebClient`). 
+     When telemetry arrives at Spring Boot, it transforms the data into an ML payload, 
+     issues a POST request to `http://localhost:5000/predict`, parses the JSON response, 
+     and writes the final verdict to PostgreSQL.
+
+Q17: What happens if the Python ML service is down when a sensor sends data?
+A17: The Spring Boot service wraps the ML invocation in robust try-catch exception 
+     handling. The raw sensor data is safely saved in the database first, and a 
+     graceful fallback status ("Service Unavailable / Pending") is logged without 
+     crashing the telemetry stream.
+
+--------------------------------------------------------------------------------
+CATEGORY E: DATABASE, POSTGRESQL & SUPABASE REALTIME
+--------------------------------------------------------------------------------
+
+Q18: Why did you choose Supabase Cloud PostgreSQL?
+A18: - PostgreSQL is an ACID-compliant, highly reliable relational database.
+     - Supabase hosts it in the cloud (AWS Mumbai), allowing remote IoT nodes and 
+       distributed analysts to connect without complex port-forwarding.
+     - Supabase provides built-in Change Data Capture (CDC) via WebSockets, allowing 
+       instant dashboard updates whenever a row is inserted.
+
+Q19: Explain the relationship between `sensor_data` and `prediction_history` tables.
+A19: It is a One-to-One / Many-to-One relational schema. `sensor_data` stores the raw 
+     environmental measurements, while `prediction_history` stores the AI verdict and 
+     confidence score, linking back via `sensor_data_id` Foreign Key with ON DELETE CASCADE.
+
+Q20: What is HikariCP?
+A20: HikariCP is a high-performance JDBC connection pool library used by Spring Boot. 
+     Instead of opening and closing an expensive database socket for every request, 
+     it maintains a pool of pre-warmed connections, reducing database latency to microseconds.
+
+--------------------------------------------------------------------------------
+CATEGORY F: FRONTEND, UI/UX & REALTIME VISUALIZATIONS
+--------------------------------------------------------------------------------
+
+Q21: How does the React frontend update in real-time without reloading the page?
+A21: Through Supabase Realtime WebSockets. The frontend initializes a subscription 
+     channel (`supabase.channel('schema-db-changes')`). Whenever an `INSERT` occurs 
+     in PostgreSQL, the database emits a WebSocket broadcast. The React component 
+     receives the new record and immediately appends it to state, triggering a smooth 
+     rerender of gauges and charts.
+
+Q22: What libraries did you use for charting and styling?
+A22: - Recharts: For responsive, SVG-based line and area charts.
+     - Tailwind CSS: For modern utility-first layout styling and responsive design.
+     - Lucide React: For clean SVG icons.
+     - Framer Motion: For micro-interactions, page transitions, and expandable accordions.
+     - HTML5 Canvas: For liquid wave fill animations and bubble cursor trails.
+
+Q23: How does the PDF / Lab Certificate export feature work?
+A23: We implemented print media stylesheets (`@media print`) and DOM canvas capture. 
+     When the analyst clicks "Print Lab Certificate", the app isolates the official 
+     double-bordered certificate format with safety checklist indicators, doctor 
+     signature line, and watermarks, invoking `window.print()` to produce an 
+     executive vector PDF.
+
+--------------------------------------------------------------------------------
+CATEGORY G: SECURITY, AUTHENTICATION & DEVOPS
+--------------------------------------------------------------------------------
+
+Q24: How does Google OAuth 2.0 work in your system?
+A24: 1. User clicks "Continue with Google" on the React portal.
+     2. Google Identity Services displays the login prompt.
+     3. Google issues a signed cryptographic ID Token (JWT) to the frontend.
+     4. Frontend posts the token to Spring Boot (`/api/auth/google`).
+     5. Spring Boot verifies the token signature against Google public certificates.
+     6. If valid, Spring Boot finds or creates the user in PostgreSQL and starts 
+        an authenticated session.
+
+Q25: How are local user passwords protected?
+A25: Passwords are encrypted using BCrypt with a cost factor of 10. BCrypt includes 
+     an automatic cryptographically random salt to prevent rainbow table attacks, 
+     and its one-way mathematical hashing ensures passwords cannot be reversed even 
+     if the database is compromised.
+
+Q26: What are the future enhancements for this project?
+A26: 1. Edge ML: Running a quantized TensorFlow Lite model directly on the ESP32 
+        for offline classification during internet outages.
+     2. LoRaWAN Communication: Long-range radio transmission (10-15 km) for remote 
+        rural reservoirs without Wi-Fi or cellular coverage.
+     3. Automated Actuation: Adding motorized solenoid valves to automatically 
+        shut off contaminated pipelines the moment unsafe water is detected.
+     4. Heavy Metal Electrodes: Integrating ion-selective sensors for arsenic, lead, 
+        and mercury detection.
+
+================================================================================
+            END OF MAJOR PROJECT COMPLETE MASTER REFERENCE GUIDE
+================================================================================

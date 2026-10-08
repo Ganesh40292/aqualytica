@@ -20,9 +20,7 @@ const SensorSimulator = () => {
       temperature: parseFloat((Math.random() * 8.0 + 20.0).toFixed(1)),
       turbidity: parseFloat((isPotableBase ? (Math.random() * 1.5 + 1.0) : (Math.random() * 8.0 + 4.5)).toFixed(2)),
       totalDissolvedSolids: Math.floor(isPotableBase ? (Math.random() * 300 + 150) : (Math.random() * 1200 + 800)),
-      conductivity: Math.floor(isPotableBase ? (Math.random() * 200 + 350) : (Math.random() * 800 + 600)),
-      nitrate: parseFloat((isPotableBase ? (Math.random() * 3.0 + 1.0) : (Math.random() * 20.0 + 12.0)).toFixed(2)),
-      chloride: parseFloat((isPotableBase ? (Math.random() * 50.0 + 100.0) : (Math.random() * 250.0 + 200.0)).toFixed(2))
+      conductivity: Math.floor(isPotableBase ? (Math.random() * 200 + 350) : (Math.random() * 800 + 600))
     };
   };
 

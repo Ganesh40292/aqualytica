@@ -66,17 +66,17 @@ def main():
     print("  STEP 3: Data Hygiene & Outlier Filtering")
     print("=" * 70)
 
-    # Required 7 core ML feature columns
+    # Required 5 core ML feature columns (Nitrate and Chloride removed)
     feature_cols = [
         "pH", "Temperature", "Turbidity", "Total Dissolved Solids",
-        "Conductivity", "Nitrate", "Chloride"
+        "Conductivity"
     ]
     
     # Ensure numeric types
     for col in feature_cols:
         df[col] = pd.to_numeric(df[col], errors="coerce")
             
-    # Drop rows with nulls in core 7 features
+    # Drop rows with nulls in core 5 features
     df = df.dropna(subset=feature_cols)
     
     # Drop duplicates
@@ -84,15 +84,13 @@ def main():
     df = df.drop_duplicates(subset=feature_cols + ["Target"])
     print(f"  Duplicate rows removed: {prev_len - len(df):,}")
 
-    # Physical range filters for 7 core features
+    # Physical range filters for 5 core features
     df = df[
         (df["pH"] >= 0) & (df["pH"] <= 14) &
         (df["Temperature"] >= 0) & (df["Temperature"] <= 100) &
         (df["Turbidity"] >= 0) &
         (df["Total Dissolved Solids"] >= 0) &
-        (df["Conductivity"] >= 0) &
-        (df["Nitrate"] >= 0) &
-        (df["Chloride"] >= 0)
+        (df["Conductivity"] >= 0)
     ]
     print(f"  Cleaned dataset shape: {df.shape}")
 
@@ -121,14 +119,13 @@ def main():
     print("  STEP 5: Exporting Clean Datasets")
     print("=" * 70)
 
-    # Keep standard column order: 7 features + Target
+    # Keep standard column order: 5 features + Target
     export_cols = feature_cols + ["Target"]
     sample_df = sample_df[export_cols].copy()
 
     round_dict = {
         "pH": 2, "Temperature": 2, "Turbidity": 2,
-        "Total Dissolved Solids": 2, "Conductivity": 2,
-        "Nitrate": 2, "Chloride": 2
+        "Total Dissolved Solids": 2, "Conductivity": 2
     }
     sample_df = sample_df.round(round_dict)
 

@@ -3,9 +3,7 @@ import {
   Thermometer,
   Wind,
   Layers,
-  Zap,
-  Filter,
-  FlaskConical
+  Zap
 } from "lucide-react";
 
 export const sensorFields = [
@@ -58,25 +56,5 @@ export const sensorFields = [
     max: 10000.0,
     step: 1.0,
     placeholder: "e.g. 450"
-  },
-  {
-    name: "nitrate",
-    label: "Nitrate",
-    unit: "mg/L",
-    icon: Filter,
-    min: 0.0,
-    max: 100.0,
-    step: 0.1,
-    placeholder: "e.g. 15.0"
-  },
-  {
-    name: "chloride",
-    label: "Chloride",
-    unit: "mg/L",
-    icon: FlaskConical,
-    min: 0.0,
-    max: 1000.0,
-    step: 0.1,
-    placeholder: "e.g. 250.0"
   }
 ];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, BookOpen, Activity, Thermometer, Wind, Layers, Zap, Filter, FlaskConical } from "lucide-react";
+import { ChevronDown, ChevronUp, BookOpen, Activity, Thermometer, Wind, Layers, Zap } from "lucide-react";
 
 const parameterData = [
   {
@@ -52,26 +52,6 @@ const parameterData = [
     bgColor: "bg-yellow-950/30 border-yellow-800/30",
     barColor: "bg-yellow-500",
     description: "Measures the water's ability to conduct electricity, indicating dissolved ion content and potential impurities."
-  },
-  {
-    name: "Nitrate",
-    icon: Filter,
-    safeRange: "Less than 10 mg/L",
-    unit: "mg/L",
-    color: "text-purple-400",
-    bgColor: "bg-purple-950/30 border-purple-800/30",
-    barColor: "bg-purple-500",
-    description: "High nitrate levels indicate agricultural runoff or sewage contamination. Dangerous for infants (blue baby syndrome)."
-  },
-  {
-    name: "Chloride",
-    icon: FlaskConical,
-    safeRange: "Less than 250 mg/L",
-    unit: "mg/L",
-    color: "text-indigo-400",
-    bgColor: "bg-indigo-950/30 border-indigo-800/30",
-    barColor: "bg-indigo-500",
-    description: "Elevated chloride levels suggest sewage contamination, industrial discharge, or saltwater intrusion."
   }
 ];
 

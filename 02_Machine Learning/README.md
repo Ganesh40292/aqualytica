@@ -6,10 +6,10 @@ This directory contains the machine learning pipelines, Python scripts, saved mo
 
 ## ⚙️ Model Training Architecture & Reproducibility
 
-- **Training Script**: [retrain_model.py](file:///d:/Full%20Updated%20Major%20Project%28Main%20One%29/Major%20Project/02_Machine%20Learning/Notebooks/retrain_model.py)
-- **Dataset**: `Potability_Model_Dataset.csv` (10,000 stratified rows, single integer `Target` column: `0 = Not Potable`, `1 = Potable`).
+- **Training Script**: [retrain_model.py](file:///d:/Projects/Major%20Project%28Google%20Login%29/Major%20Project/02_Machine%20Learning/Notebooks/retrain_model.py)
+- **Dataset**: `Potability_Model_Dataset.csv` (10,000 stratified rows, 5 features: pH, Temperature, Turbidity, Total Dissolved Solids, Conductivity; single integer `Target` column: `0 = Not Potable`, `1 = Potable`).
 - **Reproducibility**: Train/Test split initialized with `random_state=42` (`80% Train / 20% Test`).
-- **Preprocessing**: Input features scaled using `StandardScaler` (`Feature_Scaler.pkl`).
+- **Preprocessing**: 5 Input features scaled using `StandardScaler` (`Feature_Scaler.pkl`).
 
 ---
 
@@ -17,21 +17,21 @@ This directory contains the machine learning pipelines, Python scripts, saved mo
 
 | Model Candidate | Validation Accuracy | F1-Score | Status |
 | :--- | :--- | :--- | :--- |
-| **Random Forest (Selected)** | **84.25%** | **0.680** | **Approved (Best performance & balance)** |
-| **Gaussian Naive Bayes** | `80.50%` | `0.635` | Evaluated |
-| **K-Nearest Neighbors** | `79.90%` | `0.612` | Evaluated |
-| **Logistic Regression** | `79.20%` | `0.589` | Evaluated |
-| **Decision Tree (CART)** | `76.45%` | `0.570` | Evaluated |
+| **Random Forest (Selected)** | **82.60%** | **0.887** | **Approved (Best performance & balance)** |
+| **K-Nearest Neighbors** | `81.05%` | `0.871` | Evaluated |
+| **Gaussian Naive Bayes** | `80.40%` | `0.865` | Evaluated |
+| **Logistic Regression** | `78.40%` | `0.852` | Evaluated |
+| **Decision Tree (CART)** | `75.30%` | `0.820` | Evaluated |
 
 ---
 
 ## 📊 Comprehensive Random Forest Metrics
 
-- **Accuracy**: `84.25%`
-- **Precision**: `63.02%`
-- **Recall**: `73.73%`
-- **F1-Score**: `67.96%`
-- **ROC-AUC**: `0.8032`
+- **Accuracy**: `82.60%`
+- **Precision**: `89.06%`
+- **Recall**: `88.36%`
+- **F1-Score**: `88.71%`
+- **ROC-AUC**: `0.7646`
 - **Evaluation Tables Exported**: `08_Documentation/Tables/Model_Evaluation_Report.csv` & `Model_Comparison.csv`
 
 ---

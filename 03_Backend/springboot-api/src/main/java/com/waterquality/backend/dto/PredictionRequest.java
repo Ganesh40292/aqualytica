@@ -36,12 +36,4 @@ public class PredictionRequest {
     @DecimalMin(value = "0.0", message = "Conductivity cannot be negative")
     private Double conductivity;
 
-    @NotNull(message = "Nitrate is required")
-    @DecimalMin(value = "0.0", message = "Nitrate cannot be negative")
-    private Double nitrate;
-
-    @NotNull(message = "Chloride is required")
-    @DecimalMin(value = "0.0", message = "Chloride cannot be negative")
-    private Double chloride;
-
 }

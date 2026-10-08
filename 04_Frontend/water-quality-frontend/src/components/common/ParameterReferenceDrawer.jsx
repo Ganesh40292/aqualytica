@@ -42,22 +42,6 @@ const parameterGuides = {
     causes: "Solar radiation, power plant cooling effluents, or seasonal heating anomalies.",
     treatments: "Thermal cooling reservoirs, aerated tanks, or shaded storage systems.",
     impact: "Alters dissolution of gases (lowers dissolved oxygen), accelerates biological growth."
-  },
-  nitrate: {
-    name: "Nitrate Concentration",
-    safeRange: "< 10.0 mg/L",
-    unit: "mg/L",
-    causes: "Septic tank leakages, animal waste, synthetic fertilizer runoffs, or agricultural wastes.",
-    treatments: "Anion exchange systems, reverse osmosis, or electrodialysis filters.",
-    impact: "Triggers 'Blue Baby Syndrome' (methemoglobinemia) in infants, locking blood oxygen transport."
-  },
-  chloride: {
-    name: "Chloride Concentration",
-    safeRange: "< 250 mg/L",
-    unit: "mg/L",
-    causes: "Road salts, wastewater treatment outfall, agricultural runoff, or mineral leaching.",
-    treatments: "Reverse osmosis systems or thermal distillation filters.",
-    impact: "Corrodes structural concrete/metal, damages plant roots, and imparts a heavy metallic taste."
   }
 };
 
@@ -75,8 +59,6 @@ const ParameterReferenceDrawer = () => {
       else if (paramKey.includes("tds") || paramKey.includes("dissolved")) key = "totalDissolvedSolids";
       else if (paramKey.includes("cond") || paramKey.includes("elect")) key = "conductivity";
       else if (paramKey.includes("temp")) key = "temperature";
-      else if (paramKey.includes("nitrate")) key = "nitrate";
-      else if (paramKey.includes("chloride")) key = "chloride";
       
       setSelectedParam(parameterGuides[key]);
       setIsOpen(true);

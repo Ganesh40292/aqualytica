@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Activity, Thermometer, Wind, Layers, Zap, Filter, FlaskConical, Heart } from "lucide-react";
+import { Activity, Thermometer, Wind, Layers, Zap, Heart } from "lucide-react";
 
 function SensorHealthPanel({ ph = 7.2, turbidity = 0.8, tds = 180 }) {
   // Check if sensors are in warning thresholds
@@ -53,26 +53,6 @@ function SensorHealthPanel({ ph = 7.2, turbidity = 0.8, tds = 180 }) {
       icon: Zap, 
       status: "healthy", 
       color: "text-yellow-400",
-      statusText: "Healthy",
-      statusColor: "text-green-400 bg-green-950/20 border-green-900/20",
-      indicatorColor: "bg-green-500",
-      pingColor: "bg-green-400"
-    },
-    { 
-      name: "Nitrate Filter Sensor", 
-      icon: Filter, 
-      status: "healthy", 
-      color: "text-purple-400",
-      statusText: "Healthy",
-      statusColor: "text-green-400 bg-green-950/20 border-green-900/20",
-      indicatorColor: "bg-green-500",
-      pingColor: "bg-green-400"
-    },
-    { 
-      name: "Chloride Electrode", 
-      icon: FlaskConical, 
-      status: "healthy", 
-      color: "text-indigo-400",
       statusText: "Healthy",
       statusColor: "text-green-400 bg-green-950/20 border-green-900/20",
       indicatorColor: "bg-green-500",

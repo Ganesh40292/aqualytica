@@ -1,7 +1,7 @@
 -- Aqualytica - Supabase PostgreSQL Database Schema
 -- Run this script in your Supabase Dashboard -> SQL Editor
 
--- 1. Sensor Data Table (Stores 7 physical parameters from ESP32 telemetry)
+-- 1. Sensor Data Table (Stores 5 physical parameters from ESP32 telemetry)
 CREATE TABLE IF NOT EXISTS sensor_data (
     id BIGSERIAL PRIMARY KEY,
     ph DOUBLE PRECISION NOT NULL,
@@ -9,8 +9,6 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     turbidity DOUBLE PRECISION NOT NULL,
     total_dissolved_solids DOUBLE PRECISION NOT NULL,
     conductivity DOUBLE PRECISION NOT NULL,
-    nitrate DOUBLE PRECISION NOT NULL,
-    chloride DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

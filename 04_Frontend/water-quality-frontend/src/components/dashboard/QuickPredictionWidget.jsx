@@ -13,9 +13,7 @@ const QuickPredictionWidget = ({ onPredictionSuccess }) => {
     temperature: "",
     turbidity: "",
     totalDissolvedSolids: "",
-    conductivity: "",
-    nitrate: "",
-    chloride: ""
+    conductivity: ""
   });
 
   const handleChange = (e) => {
@@ -126,34 +124,6 @@ const QuickPredictionWidget = ({ onPredictionSuccess }) => {
             value={formData.conductivity}
             onChange={handleChange}
             placeholder="e.g. 500"
-            required
-            className="bg-slate-950/50 border border-slate-800/80 rounded-xl px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-slate-400">Nitrate (mg/L)</label>
-          <input
-            type="number"
-            step="0.1"
-            name="nitrate"
-            value={formData.nitrate}
-            onChange={handleChange}
-            placeholder="e.g. 4.5"
-            required
-            className="bg-slate-950/50 border border-slate-800/80 rounded-xl px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-slate-400">Chloride (mg/L)</label>
-          <input
-            type="number"
-            step="0.1"
-            name="chloride"
-            value={formData.chloride}
-            onChange={handleChange}
-            placeholder="e.g. 250"
             required
             className="bg-slate-950/50 border border-slate-800/80 rounded-xl px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
           />

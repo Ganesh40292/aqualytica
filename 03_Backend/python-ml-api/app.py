@@ -64,9 +64,7 @@ def predict():
         data["temperature"],
         data["turbidity"],
         data["totalDissolvedSolids"],
-        data["conductivity"],
-        data["nitrate"],
-        data["chloride"]
+        data["conductivity"]
     ]])
 
     # Scale the input parameters using standard scaler

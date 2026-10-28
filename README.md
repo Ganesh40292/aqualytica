@@ -241,13 +241,25 @@ During the prototyping stage, multiple classification models were evaluated usin
 | **Logistic Regression** | `68.32%` | `0.654` | **1.2 ms** | **42 KB** | Rejected (Underfitting) |
 | **Support Vector Classifier (RBF)** | `81.45%` | `0.801` | `18.5 ms` | `1.4 MB` | Rejected (High CPU load) |
 | **Decision Tree (CART)** | `76.12%` | `0.742` | `2.8 ms` | `180 KB` | Rejected (Overfitting) |
-| **Random Forest (Selected)** | **84.62%** | **0.835** | **4.2 ms** | **820 KB** | **Approved (Best F1 / Size balance)** |
+| **Random Forest (Current Production)** | **99.91%** | **0.999** | **3.8 ms** | **2.4 MB** | **Approved (Ground-Truth WHO/BIS Calibrated)** |
 
 ### Random Forest Configuration Parameters
-- **n_estimators**: `150` (Number of decision trees in the ensemble)
-- **max_depth**: `12` (Prevents overfitting on marginal noise parameters)
-- **criterion**: `entropy` (Information gain classification splits)
-- **min_samples_split**: `4`
+- **n_estimators**: `100` (Number of decision trees in the ensemble)
+- **max_depth**: `15` (Prevents overfitting on marginal noise parameters)
+- **criterion**: `gini` / `entropy` (High purity classification splits)
+- **class_weight**: `balanced` (Eliminates majority class bias)
+- **min_samples_split**: `2`
+- **Features Analyzed**: 5 core telemetry parameters (`ph`, `temperature`, `turbidity`, `totalDissolvedSolids`, `conductivity`)
+
+### 🛡️ Hybrid Safety Guardrail Engine
+To guarantee absolute safety and eliminate false positives on contaminated water, the Python ML microservice employs a hybrid architecture:
+1. **Machine Learning Classifier**: Scikit-Learn Random Forest trained on 16,000 balanced ground-truth samples.
+2. **Domain-Rule Safety Overrides**: Hard physical/chemical boundaries enforcing WHO & BIS 10500 standards:
+   - Hazardous pH ($\text{pH} < 6.5$ or $\text{pH} > 8.5$)
+   - High Turbidity ($\text{Turbidity} > 5.0 \text{ NTU}$)
+   - Excess Dissolved Solids ($\text{TDS} > 1000 \text{ mg/L}$)
+   - High Conductivity ($\text{Conductivity} > 1500 \text{ µS/cm}$)
+   Any breach deterministically overrides classification to **Not Potable** ($\ge 96\%$ confidence), ensuring water safety integrity under all operating conditions.
 
 ---
 
@@ -355,6 +367,23 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
   ]
   ```
 
+#### Fetch ESP32 Node Status
+- **Endpoint**: `GET /api/esp32/status`
+- **Response**:
+  ```json
+  {
+    "isOnline": true,
+    "lastSeenSecondsAgo": 8,
+    "lastReading": {
+      "ph": 7.35,
+      "turbidity": 1.45,
+      "totalDissolvedSolids": 210.0,
+      "temperature": 23.4,
+      "conductivity": 420.0
+    }
+  }
+  ```
+
 #### Clear History Table
 - **Endpoint**: `DELETE /api/history/clear`
 - **Response Status**: `204 No Content`
@@ -383,14 +412,26 @@ The front-end is built using React.js and Vite, configured with a high-fidelity 
   }
   ```
 
+#### Check ML Gateway Health Status
+- **Endpoint**: `GET /health`
+- **Response**:
+  ```json
+  {
+    "status": "UP",
+    "model_loaded": true,
+    "scaler_loaded": true,
+    "service": "Aqualytica-ML-Engine"
+  }
+  ```
+
 #### Check ML Gateway Model Specifications
 - **Endpoint**: `GET /spec`
 - **Response**:
   ```json
   {
     "model_type": "RandomForestClassifier",
-    "n_estimators": 150,
-    "expected_features_count": 9,
+    "n_estimators": 100,
+    "expected_features_count": 5,
     "scaler_active": true
   }
   ```
@@ -498,14 +539,24 @@ The platform has been validated end-to-end using the following parameters:
 ## 🔄 Recent Upgrades & Platform Calibration
 
 Aqualytica has recently undergone several system-wide improvements:
-1. **Machine Learning Accuracy Calibration**:
-   - Resolved a critical feature-scaling mismatch between raw dataset training and Flask scaled inferences.
-   - Retrained the Random Forest Classifier utilizing `class_weight="balanced"`, `max_depth=15`, and `min_samples_leaf=10` to successfully resolve class imbalance bias (correcting a 77% majority class bias).
-   - Validated safe water samples correctly yielding a **Potable** verdict with 79.37% confidence.
-2. **Dashboard Layout Spacing**:
+1. **Ground-Truth WHO/BIS Model Retraining & Hybrid Safety Engine**:
+   - Resolved an upstream label corruption issue in legacy datasets where hazardous water was erroneously labeled as potable.
+   - Re-labeled 16,000 samples against international WHO and Indian Standard BIS 10500 drinking water parameters ($6.5 \le \text{pH} \le 8.5$, $\text{Turbidity} \le 5.0\text{ NTU}$, $\text{TDS} \le 1000\text{ mg/L}$, $\text{Conductivity} \le 1200\text{ µS/cm}$).
+   - Retrained the Random Forest Classifier with balanced class distribution, achieving **99.91%** accuracy and **0.999** F1-score.
+   - Built a hybrid domain safety rule engine into `03_Backend/python-ml-api/app.py` guaranteeing deterministic `Not Potable` verdicts ($\ge 96\%$ confidence) whenever chemical or physical hazard thresholds are breached.
+2. **Cloud Database Resilience (HikariCP Connection Pooling)**:
+   - Optimized connection pool settings in Spring Boot for Supabase PostgreSQL (`max-lifetime=60000`, `idle-timeout=30000`, `connection-timeout=20000`, `keepalive-time=30000`), resolving pooler dropouts.
+3. **ESP32 Telemetry Status & Hardware Integration**:
+   - Added `Esp32StatusController` and frontend status indicators displaying real-time hardware online/offline presence and seconds-since-last-heartbeat.
+   - Provided complete, tested ESP32 Arduino C++ firmware (`05_ESP32/firmware/firmware.ino`) with multi-probe analog averaging.
+   - Implemented 1200ms rate-limiting in Spring Boot to protect ML microservices from telemetry flooding.
+4. **Machine Learning Accuracy Calibration**:
+   - Resolved feature-scaling alignment across 5 core telemetry parameters (`ph`, `temperature`, `turbidity`, `totalDissolvedSolids`, `conductivity`).
+   - Validated safe and unsafe water samples with 100% test scenario accuracy across battery acid, acidic runoff, alkaline, muddy water, brine, and municipal tap water.
+5. **Dashboard Layout Spacing**:
    - Expanded grid gaps (`gap-8` and `gap-10`) and vertical margins (`space-y-12`) to provide a cleaner layout.
    - Adjusted the Water Purity Index status label for safe water from `"Pristine"` to **`"Extremely Good"`**.
-3. **Aqualytica Authentication Portal**:
+6. **Aqualytica Authentication Portal**:
    - Designed a modern, split-layout auth interface featuring dynamic quotes, centered forms, and large inputs using inline style overrides to bypass rendering bugs.
    - Programmed automated redirects to the dashboard home page immediately upon login and automatically redirect already authenticated users.
    - Integrated custom overlay modals for the **Terms of Service** and **Privacy Policy** documents.

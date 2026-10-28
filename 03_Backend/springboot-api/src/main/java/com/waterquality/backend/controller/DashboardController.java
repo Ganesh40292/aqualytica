@@ -8,28 +8,25 @@ import com.waterquality.backend.dto.DashboardResponse;
 import com.waterquality.backend.response.ApiResponse;
 import com.waterquality.backend.service.DashboardService;
 
-import lombok.RequiredArgsConstructor;
-
+/**
+ * REST controller providing global dashboard analytics, test volumes, and potability breakdown.
+ */
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class DashboardController {
 
     private final DashboardService dashboardService;
 
-    @GetMapping("/dashboard")
-    public ApiResponse<DashboardResponse> getDashboard() {
-
-        return ApiResponse.<DashboardResponse>builder()
-
-                .success(true)
-
-                .message("Dashboard Statistics Retrieved Successfully")
-
-                .data(dashboardService.getDashboardStatistics())
-
-                .build();
-
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
     }
 
+    @GetMapping("/dashboard")
+    public ApiResponse<DashboardResponse> getDashboard() {
+        return ApiResponse.<DashboardResponse>builder()
+                .success(true)
+                .message("Dashboard Statistics Retrieved Successfully")
+                .data(dashboardService.getDashboardStatistics())
+                .build();
+    }
 }

@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, RefreshCw, ChevronLeft, ChevronRight, ArrowUpDown, Printer, ChevronDown, ChevronUp, Clock, Shield, Lightbulb, SlidersHorizontal } from "lucide-react";
+import { Search, RefreshCw, ChevronLeft, ChevronRight, ArrowUpDown, Printer, ChevronDown, ChevronUp, Clock, Shield, Lightbulb, SlidersHorizontal, AlertTriangle } from "lucide-react";
 import StatusBadge from "../common/StatusBadge";
+
 import ExportButton from "../common/ExportButton";
 import { exportToCSV, exportExactPageToPDF } from "../../utils/exportUtils";
 
@@ -713,7 +714,17 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                       <td className="p-4">{item.totalDissolvedSolids?.toLocaleString()}</td>
                       <td className="p-4">{item.conductivity?.toLocaleString()}</td>
                       <td className="p-4">
-                        <StatusBadge prediction={item.prediction} />
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <StatusBadge prediction={item.prediction} />
+                          {item.isAnomaly && (
+                            <span 
+                              className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-950/60 text-amber-400 border border-amber-800/60 cursor-help"
+                              title={item.anomalyReason || "Outlier sensor reading detected"}
+                            >
+                              Anomaly
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-4 text-cyan-400 font-bold">{item.confidence}%</td>
                       <td className="p-4 text-slate-500 text-xs">{formattedTime}</td>
@@ -752,6 +763,15 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                                     <span>Classification Confidence: <strong className="text-cyan-455">{item.confidence}%</strong></span>
                                   </div>
                                 </div>
+
+                                {/* Hardware Anomaly Alert Card if flagged */}
+                                {item.isAnomaly && (
+                                  <div className="p-3 rounded-xl bg-amber-955/40 border border-amber-850/60 text-amber-300 text-xs flex items-center gap-2.5">
+                                    <AlertTriangle size={15} className="text-amber-400 shrink-0" />
+                                    <span><strong className="font-bold">Hardware Alert:</strong> {item.anomalyReason || "Sensor reading exceeded physical limits"}</span>
+                                  </div>
+                                )}
+
 
                                 {/* Sensor Values Grid */}
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">

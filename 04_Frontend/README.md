@@ -8,7 +8,7 @@ This directory houses the user portals and dashboard clients for **Aqualytica â€
 
 ### 1. Client Dashboard Portal (`/water-quality-frontend`)
 - **Technology Stack**: React, Vite, Tailwind CSS, Framer Motion, and Recharts.
-- **Port**: `5173`
+- **Port**: `5200`
 - **Key Modules**:
   - Liquid canvas waves, bubble particles, cursor trail graphics.
   - Interactive parameters guidelines.

@@ -71,7 +71,7 @@ npm install
 ```bash
 npm run dev
 ```
-The React application will launch at `http://localhost:5173/`.
+The React application will launch at `http://localhost:5200/`.
 
 ### 3. Build Production Bundle
 ```bash

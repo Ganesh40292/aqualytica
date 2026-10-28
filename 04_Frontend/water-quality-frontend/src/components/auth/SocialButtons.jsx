@@ -1,10 +1,11 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "1095651319432-8bciubb89jokk3089ud622eh9rsiloc0.apps.googleusercontent.com";
 
 const SocialButtons = ({ onSuccess, onError }) => {
   const [loading, setLoading] = useState(false);
   const [gsiReady, setGsiReady] = useState(false);
+  const isGsiInitialized = useRef(false);
 
   const handleGoogleToken = useCallback(async (idToken) => {
     setLoading(true);
@@ -66,14 +67,17 @@ const SocialButtons = ({ onSuccess, onError }) => {
   const containerRef = useCallback((node) => {
     if (node && window.google?.accounts?.id) {
       try {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response) => {
-            if (response.credential) {
-              handleGoogleToken(response.credential);
-            }
-          },
-        });
+        if (!isGsiInitialized.current) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: (response) => {
+              if (response.credential) {
+                handleGoogleToken(response.credential);
+              }
+            },
+          });
+          isGsiInitialized.current = true;
+        }
 
         node.innerHTML = "";
         window.google.accounts.id.renderButton(node, {

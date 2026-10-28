@@ -14,9 +14,8 @@ import lombok.Setter;
 public class PredictionResponse {
 
     private String prediction;
-
     private Double confidence;
-
     private String timestamp;
-
+    private Boolean isAnomaly;
+    private String anomalyReason;
 }

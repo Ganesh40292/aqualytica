@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import PageWrapper from "../../components/common/PageWrapper";
 import SkeletonCard from "../../components/common/SkeletonCard";
 import { getRecentHistory } from "../../services/historyService";
+import { getEsp32Status } from "../../services/esp32Service";
+import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
 import ESP32StatusPanel from "../../components/telemetry/ESP32StatusPanel";
 import SensorHealthPanel from "../../components/telemetry/SensorHealthPanel";
 import TelemetryDataStreamParticles from "../../components/telemetry/TelemetryDataStreamParticles";
@@ -13,6 +15,8 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "rec
 
 const Telemetry = () => {
   const [historyData, setHistoryData] = useState([]);
+  const [esp32Status, setEsp32Status] = useState(null);
+  const [secondsAgo, setSecondsAgo] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Anomaly drift simulation states
@@ -23,14 +27,32 @@ const Telemetry = () => {
 
   const fetchTelemetry = useCallback(async () => {
     try {
-      const data = await getRecentHistory();
+      const [data, status] = await Promise.all([
+        getRecentHistory(),
+        getEsp32Status().catch(() => null)
+      ]);
       // Reverse array to show trend left-to-right (chronological)
       setHistoryData((data || []).slice().reverse());
+      if (status) {
+        setEsp32Status(status);
+      }
+      setSecondsAgo(0);
     } catch (err) {
       console.error("Failed to load telemetry data", err);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Subscribe to instant Supabase Realtime updates
+  useSupabaseRealtime(fetchTelemetry);
+
+  // Live seconds ticker
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSecondsAgo((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -60,16 +82,18 @@ const Telemetry = () => {
 
   const recentData = simulatedHistoryData.length > 0 ? simulatedHistoryData[simulatedHistoryData.length - 1] : null;
 
-  const mockESP32Data = recentData ? {
-    connected: true,
-    connectionStatus: "Connected",
-    lastUpdate: recentData.predictedAt ? new Date(recentData.predictedAt).toLocaleTimeString() : "Just now",
-    samplingInterval: "5 seconds",
-    signalStrength: -45,
+  // Active status representation (uses live backend heartbeat with graceful fallback)
+  const activeESP32Data = esp32Status || (recentData ? {
+    connected: false,
+    connectionStatus: "Standby / Offline",
+    lastUpdate: recentData.predictedAt ? new Date(recentData.predictedAt).toLocaleTimeString() : "Awaiting data",
+    samplingInterval: "10 seconds",
+    signalStrength: -90,
     firmwareVersion: "v3.2.1",
-    ipAddress: "192.168.1.105",
-    macAddress: "A4:CF:12:8B:3E:F0"
-  } : null;
+    ipAddress: "N/A",
+    macAddress: "ESP32-NODE-01"
+  } : null);
+
 
   // Helper function to build custom area graphs for each parameter
   const renderParamChart = (title, dataKey, color, unit, domain) => {
@@ -141,10 +165,15 @@ const Telemetry = () => {
           Node Telemetry Operations Panel
         </div>
         <div className="flex items-center gap-4.5 no-print">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-bold text-slate-355 shadow-sm relative overflow-hidden">
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold shadow-sm relative overflow-hidden ${
+            activeESP32Data?.connected
+              ? "bg-slate-900/60 border-slate-800 text-slate-300"
+              : "bg-amber-950/20 border-amber-800/40 text-amber-300"
+          }`}>
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-            <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-            <span>WIFI STREAM ACTIVE</span>
+            <Radio className={`w-4 h-4 ${activeESP32Data?.connected ? "text-cyan-400 animate-pulse" : "text-amber-400"}`} />
+            <span>{activeESP32Data?.connected ? "NODE STREAM ACTIVE" : "NODE STANDBY / OFFLINE"}</span>
+            <span className="text-slate-500 font-medium">| {secondsAgo === 0 ? "Just now" : `${secondsAgo}s ago`}</span>
           </div>
           <ExportButton
             onExportPDF={handleExportPDF}
@@ -155,7 +184,8 @@ const Telemetry = () => {
 
       {/* Hardware Node Status & Simulation Overrides Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-        <ESP32StatusPanel dataSource={mockESP32Data} />
+        <ESP32StatusPanel dataSource={activeESP32Data} />
+
         
         <SensorHealthPanel 
           ph={recentData ? recentData.ph : 7.20} 

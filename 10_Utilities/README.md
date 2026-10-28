@@ -6,11 +6,11 @@ This directory contains scripts, database backups, calibration values, and confi
 
 ## Utility Tools
 
-1. **Database Seed Scripts**:
-   - Initial MySQL SQL scripts seeding standard parameters datasets into the history ledger tables.
+1. **Telemetry Mock Senders**:
+   - [mock_telemetry_sender.py](file:///d:/Projects/Major%20Project%28Google%20Login%29/Major%20Project/10_Utilities/mock_telemetry_sender.py): Simulates physical ESP32 telemetry transmissions with safe/unsafe presets to test the Spring Boot REST backend and Machine Learning classification without needing hardware connected.
 
-2. **Telemetry Mock Senders**:
-   - Local command scripts sending simulated POST requests mimicking ESP32 WiFi packets to verify backend handler endpoints.
+2. **Database Seed Scripts**:
+   - Migration and seed scripts configured in `06_Database/`.
 
 3. **Calibration Helpers**:
-   - Script guides mapping raw analog voltage inputs from physical probes to calibrated pH, TDS, and NTU values.
+   - Script guides and math formulas mapping raw analog voltage inputs from physical probes to calibrated pH, TDS, and NTU values (documented in root `README.md`).

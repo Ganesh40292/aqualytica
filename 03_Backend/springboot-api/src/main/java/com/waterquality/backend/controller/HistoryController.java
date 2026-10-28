@@ -10,43 +10,45 @@ import com.waterquality.backend.dto.HistoryResponse;
 import com.waterquality.backend.response.ApiResponse;
 import com.waterquality.backend.service.HistoryService;
 
-import lombok.RequiredArgsConstructor;
-
+/**
+ * REST controller for retrieving historical water quality evaluations and recent telemetry tests.
+ */
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class HistoryController {
 
     private final HistoryService historyService;
 
+    public HistoryController(HistoryService historyService) {
+        this.historyService = historyService;
+    }
+
     @GetMapping("/history")
     public ApiResponse<List<HistoryResponse>> getHistory() {
-
         return ApiResponse.<List<HistoryResponse>>builder()
-
                 .success(true)
-
                 .message("Prediction History Retrieved Successfully")
-
                 .data(historyService.getAllHistory())
-
                 .build();
-
     }
 
     @GetMapping("/history/recent")
     public ApiResponse<List<HistoryResponse>> getRecentHistory() {
-
         return ApiResponse.<List<HistoryResponse>>builder()
-
                 .success(true)
-
                 .message("Recent Predictions Retrieved Successfully")
-
                 .data(historyService.getRecentHistory())
-
                 .build();
-
     }
 
+    @GetMapping("/history/page")
+    public ApiResponse<org.springframework.data.domain.Page<HistoryResponse>> getPaginatedHistory(
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.<org.springframework.data.domain.Page<HistoryResponse>>builder()
+                .success(true)
+                .message("Paginated Prediction History Retrieved Successfully")
+                .data(historyService.getPaginatedHistory(page, size))
+                .build();
+    }
 }

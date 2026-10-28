@@ -88,7 +88,7 @@ The Aqualytica pipeline follows a robust 4-tier decoupled microservice architect
    ├── Saves raw data ──► [Supabase PostgreSQL 17.6] (Cloud Database)
    │                           │ (Realtime WebSockets CDC)
    │ (REST POST /predict)      ▼
-   ▼                      [React Web Portal] (Port 5173 - Live Charts, Gauges)
+   ▼                      [React Web Portal] (Port 5200 - Live Charts, Gauges)
  [Python Flask ML API]    (Port 5000 - StandardScaler + Random Forest Classifier)
    │
    └── Returns Verdict & Confidence % ──► Spring Boot ──► PostgreSQL History
@@ -497,10 +497,10 @@ Step 2: Start Java Spring Boot Middleware (Port 8080)
    ./mvnw.cmd spring-boot:run
    (Verifies backend startup on port 8080)
 
-Step 3: Start React Vite Frontend (Port 5173)
+Step 3: Start React Vite Frontend (Port 5200)
    cd "04_Frontend/water-quality-frontend"
    npm run dev
-   (Open browser at: http://localhost:5173)
+   (Open browser at: http://localhost:5200)
 
 Step 4: (Optional) Connect ESP32 Hardware
    - Flash `05_ESP32/firmware.ino` using Arduino IDE with Wi-Fi credentials.

@@ -23,8 +23,10 @@ import {
 import { getDashboardStatistics } from "../../services/dashboardService";
 import { getRecentHistory } from "../../services/historyService";
 import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
+import { useToast } from "../../context/ToastContext";
 
 function Dashboard() {
+  const { showSuccess } = useToast();
   const [dashboard, setDashboard] = useState({
     totalPredictions: 0,
     potableCount: 0,
@@ -51,8 +53,16 @@ function Dashboard() {
     }
   }, []);
 
+  const handleRealtimeTelemetry = useCallback((data) => {
+    loadData();
+    if (data && data.ph !== undefined) {
+      showSuccess(`📡 Live Hardware Telemetry: pH ${Number(data.ph).toFixed(2)}, Temp ${Number(data.temperature).toFixed(1)}°C`);
+    }
+  }, [loadData, showSuccess]);
+
   // Subscribe to instant Supabase Realtime updates
-  useSupabaseRealtime(loadData);
+  useSupabaseRealtime(handleRealtimeTelemetry);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {

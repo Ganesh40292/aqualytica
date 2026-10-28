@@ -14,21 +14,14 @@ import lombok.Setter;
 public class HistoryResponse {
 
     private Long id;
-
     private String prediction;
-
     private Double confidence;
-
     private String predictedAt;
-
     private Double ph;
-
     private Double temperature;
-
     private Double turbidity;
-
     private Double totalDissolvedSolids;
-
     private Double conductivity;
-
+    private Boolean isAnomaly;
+    private String anomalyReason;
 }

@@ -14,11 +14,7 @@ import lombok.Setter;
 public class DashboardResponse {
 
     private Long totalPredictions;
-
     private Long potableCount;
-
     private Long notPotableCount;
-
     private Double averageConfidence;
-
 }

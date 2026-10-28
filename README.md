@@ -19,7 +19,7 @@ graph TD
     SpringBoot -->|Hibernate JPA| MySQL[(MySQL Database)]
     SpringBoot -->|HTTP POST| Flask[Flask ML API :5000]
     Flask -->|Random Forest Prediction| SpringBoot
-    React[React Frontend :5173] -->|HTTP GET/POST| SpringBoot
+    React[React Frontend :5200] -->|HTTP GET/POST| SpringBoot
 ```
 
 The Aqualytica platform is built as an asynchronous microservices system:
@@ -467,7 +467,7 @@ cd aqualytica
    ```bash
    npm run dev
    ```
-   Open `http://localhost:5173/` in your browser.
+   Open `http://localhost:5200/` in your browser.
 
 ---
 

@@ -1,0 +1,19 @@
+/**
+ * Aqualytica - ESP32 Firmware Configuration Template
+ * Copy this file to "config.h" and enter your local network credentials.
+ */
+
+#ifndef AQUALYTICA_CONFIG_H
+#define AQUALYTICA_CONFIG_H
+
+// WiFi Credentials
+#define WIFI_SSID_CONFIG     "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD_CONFIG "YOUR_WIFI_PASSWORD"
+
+// Backend Telemetry Ingestion Endpoint (adjust IP to your computer's local LAN IP)
+#define SERVER_URL_CONFIG    "http://192.168.1.100:8080/api/telemetry"
+
+// Telemetry streaming interval in milliseconds (default: 10 seconds)
+#define TELEMETRY_INTERVAL_CONFIG_MS 10000
+
+#endif // AQUALYTICA_CONFIG_H

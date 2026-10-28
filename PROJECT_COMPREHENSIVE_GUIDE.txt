@@ -267,7 +267,7 @@ Key Modules & Pages in the Web Application:
    - View account information, update passwords, and manage analyst credentials.
    - Sensor simulator and audio chime status preferences.
 
-Service Port: http://localhost:5173
+Service Port: http://localhost:5200
 
 ================================================================================
 8. SECURITY, AUTHENTICATION & GOOGLE LOGIN

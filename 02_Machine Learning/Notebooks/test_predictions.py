@@ -12,6 +12,7 @@ This script tests predictions end-to-end across:
 
 import urllib.request
 import json
+import time
 
 test_cases = [
     {
@@ -96,6 +97,7 @@ def test_springboot():
             match = "OK" if pred == tc["expected"] else "MISMATCH"
             print(f"  {tc['name']}")
             print(f"    Expected: {tc['expected']:<12} | Predicted: {pred:<12} | Confidence: {conf:>6.2f}% | Status: {match}\n")
+        time.sleep(1.5)
 
 if __name__ == "__main__":
     test_flask()

@@ -18,7 +18,7 @@ const SummaryCards = ({ history = [] }) => {
   const latest = history[0] ? history[0].prediction : "None";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
       <DashboardCard
         title="Evaluations Counter"
         value={total}
@@ -42,20 +42,24 @@ const SummaryCards = ({ history = [] }) => {
         icon={<Target size={22} />}
       />
 
-      {/* Latest Prediction Custom Card */}
-      <div className="bg-slate-900/30 backdrop-blur-3xl rounded-3xl p-8 shadow-2xl border border-slate-800/40 flex items-center justify-between min-h-[160px] hover:shadow-[0_0_35px_rgba(6,182,212,0.15)] hover:border-cyan-500/40 transition-all duration-300">
-        <div className="space-y-2">
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Latest Output</p>
-          <div className="pt-2">
-            {history[0] ? (
-              <StatusBadge prediction={latest} />
-            ) : (
-              <span className="text-slate-500 font-bold text-sm">No predictions yet</span>
-            )}
+      {/* Latest Prediction Custom Card aligned with DashboardCards */}
+      <div className="bg-slate-900/40 backdrop-blur-3xl rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800/50 flex flex-col items-center justify-center text-center min-h-[165px] sm:min-h-[180px] hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:border-purple-500/40 transition-all duration-300">
+        <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full">
+          <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/60 text-purple-400 shadow-md shrink-0">
+            <Calendar size={22} />
           </div>
-        </div>
-        <div className="text-3xl p-4.5 rounded-2xl bg-slate-950/50 border border-slate-800/40 text-purple-400">
-          <Calendar size={22} />
+          <div className="space-y-1.5 w-full flex flex-col items-center">
+            <p className="text-slate-400 text-xs font-bold uppercase tracking-wider leading-none">
+              Latest Output
+            </p>
+            <div className="pt-0.5">
+              {history[0] ? (
+                <StatusBadge prediction={latest} />
+              ) : (
+                <span className="text-slate-500 font-bold text-xs">No records yet</span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

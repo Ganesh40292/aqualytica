@@ -31,7 +31,7 @@ const PageWrapper = ({ children, className = "" }) => {
       initial="initial"
       animate="animate"
       exit="exit"
-      className={`w-full px-2 md:px-8 space-y-8 pb-16 ${className}`}
+      className={`w-full max-w-[1560px] mx-auto space-y-6 sm:space-y-8 pb-12 sm:pb-16 px-1 sm:px-3 lg:px-4 ${className}`}
     >
       {children}
     </motion.div>

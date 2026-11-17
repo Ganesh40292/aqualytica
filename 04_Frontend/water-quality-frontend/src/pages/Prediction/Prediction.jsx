@@ -25,7 +25,7 @@ const Prediction = () => {
       </div>
 
       {/* Spacious 2-Column Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch w-full">
         
         {/* Left Column: Water Sample Analysis Form */}
         <div className="lg:col-span-2">
@@ -33,7 +33,7 @@ const Prediction = () => {
         </div>
 
         {/* Right Column: Telemetry Calibration Inspector */}
-        <div className="lg:col-span-1 flex flex-col gap-8">
+        <div className="lg:col-span-1 flex flex-col gap-6 sm:gap-8">
           
           {/* Card 1: Sensor Hardware calibration stats */}
           <div className="bg-slate-900/30 backdrop-blur-3xl border border-slate-800/40 rounded-3xl p-6 shadow-xl space-y-5 flex-1 hover:border-cyan-500/20 transition-all duration-300">
@@ -48,10 +48,10 @@ const Prediction = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="p-3.5 rounded-xl bg-slate-955/40 border border-slate-850">
+              <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-850">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="flex items-center gap-2 text-slate-400">
-                    <Activity className="w-4 h-4 text-cyan-455" /> pH Probe
+                    <Activity className="w-4 h-4 text-cyan-400" /> pH Probe
                   </span>
                   <span className="text-green-400 bg-green-950/40 border border-green-900/30 px-1.5 py-0.5 rounded text-[10px]">Calibrated (pH 7.0)</span>
                 </div>
@@ -60,7 +60,7 @@ const Prediction = () => {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-955/40 border border-slate-850">
+              <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-850">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="flex items-center gap-2 text-slate-400">
                     <Activity className="w-4 h-4 text-teal-400" /> Turbidity Optic
@@ -68,11 +68,11 @@ const Prediction = () => {
                   <span className="text-green-400 bg-green-950/40 border border-green-900/30 px-1.5 py-0.5 rounded text-[10px]">Calibrated (0 NTU)</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full mt-3 overflow-hidden">
-                  <div className="h-full w-[95%] bg-teal-450 rounded-full" />
+                  <div className="h-full w-[95%] bg-teal-400 rounded-full" />
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-955/40 border border-slate-850">
+              <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-850">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="flex items-center gap-2 text-slate-400">
                     <Thermometer className="w-4 h-4 text-rose-400" /> Temp Transducer

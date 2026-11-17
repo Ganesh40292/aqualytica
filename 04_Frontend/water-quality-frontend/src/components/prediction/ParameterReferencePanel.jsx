@@ -100,7 +100,7 @@ function ParameterReferencePanel() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-3.5 rounded-xl bg-slate-955/40 border border-slate-900/60 space-y-2"
+                    className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-900/60 space-y-2"
                   >
                     <div className="flex items-center justify-between">
                       <span className={`flex items-center gap-2 text-xs font-bold ${param.color}`}>

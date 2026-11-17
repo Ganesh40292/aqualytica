@@ -37,7 +37,7 @@ function Layout({ children }) {
       <div className="flex flex-col flex-1 min-w-0 z-10 relative">
         <Navbar />
 
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto scrollbar-thin">
+        <main className="flex-1 p-4 sm:p-6 lg:p-7 overflow-y-auto scrollbar-thin">
           {children}
         </main>
       </div>

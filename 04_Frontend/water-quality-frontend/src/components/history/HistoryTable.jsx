@@ -57,9 +57,31 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
   // Advanced filter states
   const [verdictFilter, setVerdictFilter] = useState("all");
   const [minConfidence, setMinConfidence] = useState(0);
+  const [datePreset, setDatePreset] = useState("all"); // all, 24h, 7d, 30d, custom
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [anomaliesOnly, setAnomaliesOnly] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+  // Quick Date Preset handler
+  const handleDatePreset = (preset) => {
+    setDatePreset(preset);
+    if (preset === "all") {
+      setStartDate("");
+      setEndDate("");
+    } else {
+      const now = new Date();
+      let start = new Date();
+      if (preset === "24h") start.setTime(now.getTime() - 24 * 60 * 60 * 1000);
+      else if (preset === "7d") start.setDate(now.getDate() - 7);
+      else if (preset === "30d") start.setDate(now.getDate() - 30);
+      
+      setStartDate(start.toISOString().split("T")[0]);
+      setEndDate(now.toISOString().split("T")[0]);
+    }
+    setCurrentPage(1);
+    setExpandedRow(null);
+  };
 
   // Search & Advanced Filters
   const filteredHistory = useMemo(() => {
@@ -71,16 +93,26 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
         matchSearch(item.ph) ||
         matchSearch(item.temperature) ||
         matchSearch(item.totalDissolvedSolids) ||
+        matchSearch(item.conductivity) ||
+        matchSearch(item.anomalyReason) ||
         matchSearch(item.confidence);
 
       // 2. Verdict filter
-      const passVerdict = verdictFilter === "all" || 
-        item.prediction?.toLowerCase() === verdictFilter.toLowerCase();
+      let passVerdict = true;
+      if (verdictFilter === "potable") {
+        passVerdict = item.prediction?.toLowerCase() === "potable";
+      } else if (verdictFilter === "not_potable" || verdictFilter === "contaminated") {
+        const pred = (item.prediction || "").toLowerCase();
+        passVerdict = pred.includes("not") || pred.includes("contam");
+      }
 
       // 3. Min Confidence filter
       const passConfidence = (item.confidence || 0) >= minConfidence;
 
-      // 4. Date range filter
+      // 4. Anomaly Only filter
+      const passAnomaly = !anomaliesOnly || item.isAnomaly === true;
+
+      // 5. Date filter
       let passDate = true;
       if (item.predictedAt) {
         const itemDateStr = item.predictedAt.split("T")[0]; // YYYY-MM-DD
@@ -88,9 +120,9 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
         if (endDate && itemDateStr > endDate) passDate = false;
       }
 
-      return passSearch && passVerdict && passConfidence && passDate;
+      return passSearch && passVerdict && passConfidence && passAnomaly && passDate;
     });
-  }, [history, searchTerm, verdictFilter, minConfidence, startDate, endDate]);
+  }, [history, searchTerm, verdictFilter, minConfidence, anomaliesOnly, startDate, endDate]);
 
   // Sort Filter
   const sortedHistory = useMemo(() => {
@@ -145,7 +177,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
     if (filteredHistory.length === 0) return;
     const headers = [
       "ID", "pH", "Temp (°C)", "Turbidity (NTU)", "TDS (mg/L)", 
-      "Conductivity (µS/cm)", "Verdict", "Confidence (%)", "Timestamp"
+      "Est. Conductivity (µS/cm)", "Verdict", "Confidence (%)", "Is Anomaly", "Anomaly Reason", "Timestamp"
     ];
     const rows = filteredHistory.map((item) => [
       item.id,
@@ -156,6 +188,8 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
       item.conductivity?.toFixed(0),
       item.prediction,
       item.confidence,
+      item.isAnomaly ? "YES" : "NO",
+      item.anomalyReason || "None",
       item.predictedAt ? new Date(item.predictedAt).toLocaleString() : "N/A"
     ]);
     exportToCSV(headers, rows, `Aqualytica_Record_Ledger_${new Date().toISOString().split("T")[0]}.csv`);
@@ -495,52 +529,92 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
   return (
     <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
       {/* Top Controls Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        {/* Search Field */}
-        <div className="relative max-w-md w-full">
-          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search by safety status, pH, temperature, or confidence..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-              setExpandedRow(null);
-            }}
-            className="w-full bg-slate-955/60 border border-slate-850 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 placeholder-slate-655 focus:outline-none focus:border-cyan-500/50 transition-colors"
-          />
-        </div>
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          {/* Search Field */}
+          <div className="relative max-w-md w-full">
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
+            <input
+              type="text"
+              placeholder="Search by verdict, pH, temperature, anomaly reason..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+                setExpandedRow(null);
+              }}
+              className="w-full h-10 bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+            />
+          </div>
 
-        {/* Toolbar Buttons */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              showAdvancedFilters || verdictFilter !== "all" || minConfidence > 0 || startDate || endDate
-                ? "bg-cyan-500/10 border-cyan-500 text-cyan-400"
-                : "border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-800/50 text-slate-400 hover:text-slate-200"
-            }`}
-            title="Advanced Filters"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            <span className="hidden sm:inline">Filters</span>
-          </button>
+          {/* Quick Filter Presets & Toolbar Buttons */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center h-10 bg-slate-950/60 border border-slate-800/80 rounded-xl p-1 text-xs">
+              {[
+                { label: "All", id: "all" },
+                { label: "24h", id: "24h" },
+                { label: "7d", id: "7d" },
+                { label: "30d", id: "30d" }
+              ].map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleDatePreset(p.id)}
+                  className={`h-full px-3 rounded-lg font-semibold transition-all cursor-pointer flex items-center ${
+                    datePreset === p.id
+                      ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
 
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="p-3 rounded-xl border border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition-all cursor-pointer disabled:opacity-50 animate-pulse-slow"
-            title="Refresh database records"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-cyan-400" : ""}`} />
-          </button>
-          
-          <ExportButton
-            onExportCSV={handleExportCSV}
-            onExportPDF={handleExportPDF}
-            label="Export Ledger"
-          />
+            <button
+              onClick={() => {
+                setAnomaliesOnly(!anomaliesOnly);
+                setCurrentPage(1);
+                setExpandedRow(null);
+              }}
+              className={`h-10 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                anomaliesOnly
+                  ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
+                  : "border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-800/50 text-slate-400 hover:text-slate-200"
+              }`}
+              title="Filter to show only anomalous sensor readings"
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>Anomalies Only</span>
+            </button>
+
+            <button
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={`h-10 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                showAdvancedFilters || verdictFilter !== "all" || minConfidence > 0 || (startDate && datePreset === "custom")
+                  ? "bg-cyan-500/10 border-cyan-500 text-cyan-400"
+                  : "border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-800/50 text-slate-400 hover:text-slate-200"
+              }`}
+              title="Advanced Filters"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="hidden sm:inline">Filters</span>
+            </button>
+
+            <button
+              onClick={onRefresh}
+              disabled={loading}
+              className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition-all cursor-pointer disabled:opacity-50"
+              title="Refresh database records"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-cyan-400" : ""}`} />
+            </button>
+            
+            <ExportButton
+              onExportCSV={handleExportCSV}
+              onExportPDF={handleExportPDF}
+              label="Export Ledger"
+            />
+          </div>
         </div>
       </div>
 
@@ -553,7 +627,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-955/40 border border-slate-850/60 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-950/40 border border-slate-850/60 mb-6">
               {/* Verdict Filter */}
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Verdict Classification</label>
@@ -567,8 +641,8 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                   className="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/40"
                 >
                   <option value="all">All Verdicts</option>
-                  <option value="potable">Potable</option>
-                  <option value="contaminated">Contaminated</option>
+                  <option value="potable">Potable Only</option>
+                  <option value="not_potable">Not Potable / Contaminated</option>
                 </select>
               </div>
 
@@ -600,6 +674,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                   value={startDate}
                   onChange={(e) => {
                     setStartDate(e.target.value);
+                    setDatePreset("custom");
                     setCurrentPage(1);
                     setExpandedRow(null);
                   }}
@@ -615,6 +690,7 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                   value={endDate}
                   onChange={(e) => {
                     setEndDate(e.target.value);
+                    setDatePreset("custom");
                     setCurrentPage(1);
                     setExpandedRow(null);
                   }}
@@ -628,8 +704,10 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
                   onClick={() => {
                     setVerdictFilter("all");
                     setMinConfidence(0);
+                    setDatePreset("all");
                     setStartDate("");
                     setEndDate("");
+                    setAnomaliesOnly(false);
                     setCurrentPage(1);
                     setExpandedRow(null);
                   }}
@@ -661,8 +739,8 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
               <th className="p-4 cursor-pointer hover:text-slate-205" onClick={() => handleSort("totalDissolvedSolids")}>
                 TDS <ArrowUpDown className="w-3 h-3 inline ml-1" />
               </th>
-              <th className="p-4 cursor-pointer hover:text-slate-200" onClick={() => handleSort("conductivity")}>
-                Cond <ArrowUpDown className="w-3 h-3 inline ml-1" />
+              <th className="p-4 cursor-pointer hover:text-slate-200" onClick={() => handleSort("conductivity")} title="Estimated Electrical Conductivity: EC = TDS × 2.0 µS/cm">
+                Est. Cond (µS/cm)* <ArrowUpDown className="w-3 h-3 inline ml-1" />
               </th>
               <th className="p-4 cursor-pointer hover:text-slate-200" onClick={() => handleSort("prediction")}>
                 Verdict <ArrowUpDown className="w-3 h-3 inline ml-1" />
@@ -847,6 +925,11 @@ const HistoryTable = ({ history = [], onRefresh, loading }) => {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 mt-3 px-1 text-[11px] text-slate-500">
+        <span>* Electrical Conductivity is an estimated parameter derived via formula: <span className="text-cyan-400 font-mono">EC = TDS × 2.0 µS/cm</span></span>
+        <span>Showing {paginatedHistory.length} of {sortedHistory.length} filtered records ({history.length} total in database)</span>
       </div>
 
       {/* Pagination Controls Footer */}

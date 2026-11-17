@@ -34,15 +34,15 @@ const pipelineNodes = [
     step: "05",
     name: "Prediction Decision",
     icon: CheckSquare,
-    color: "text-emerald-450 border-emerald-500/20 bg-emerald-950/30",
+    color: "text-emerald-400 border-emerald-500/20 bg-emerald-950/30",
     description: "Generates output safety label (Potable / Not Potable) and confidence indices."
   },
   {
     step: "06",
-    name: "MySQL Relational Tables",
+    name: "Supabase PostgreSQL Ledger",
     icon: Database,
     color: "text-indigo-400 border-indigo-500/20 bg-indigo-950/30",
-    description: "Persists records to historical analysis databases."
+    description: "Persists telemetry vectors and inference records to Supabase PostgreSQL database."
   },
   {
     step: "07",
@@ -76,7 +76,7 @@ function WorkflowDiagram() {
       className="space-y-6"
     >
       <div className="flex flex-col items-center justify-center text-center space-y-2 mb-8">
-        <span className="text-[10px] font-bold text-cyan-405 bg-cyan-950/40 border border-cyan-800/40 px-2.5 py-0.5 rounded uppercase tracking-wider">
+        <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/40 border border-cyan-800/40 px-2.5 py-0.5 rounded uppercase tracking-wider">
           Architecture Pipeline
         </span>
         <h4 className="text-lg font-bold text-slate-100 uppercase tracking-wide">
@@ -110,7 +110,7 @@ function WorkflowDiagram() {
                   <span className="text-sm font-bold text-slate-200 block group-hover:text-slate-100 transition-colors">
                     {node.name}
                   </span>
-                  <p className="text-xs text-slate-450 leading-relaxed font-semibold">
+                  <p className="text-xs text-slate-400 leading-relaxed font-semibold">
                     {node.description}
                   </p>
                 </div>

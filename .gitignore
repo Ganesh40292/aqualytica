@@ -207,7 +207,7 @@ application-dev.properties
 **/application-dev.properties
 
 # ------------------------------------------------------------------------------
-# 8. Embedded Systems / ESP32 / PlatformIO
+# 8. Embedded Systems / ESP32 / PlatformIO / Arduino
 # ------------------------------------------------------------------------------
 .pio/
 **/.pio/
@@ -217,6 +217,10 @@ application-dev.properties
 **/.piolibdeps/
 .clangd/
 compile_commands.json
+*.bin
+*.hex
+*.elf
+*.eep
 
 # ------------------------------------------------------------------------------
 # 9. Logs, Dumps & Scratch Directories

@@ -10,7 +10,7 @@ const MiniPieChart = ({ statistics }) => {
   const isEmpty = (statistics.potableCount || 0) === 0 && (statistics.notPotableCount || 0) === 0;
 
   return (
-    <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-xl flex flex-col h-full justify-between">
+    <div className="bg-slate-900/30 backdrop-blur-3xl border border-slate-800/40 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col h-full justify-between hover:border-cyan-500/20 transition-all duration-300">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-cyan-400" />

@@ -114,7 +114,7 @@ const LiquidWaveCard = ({
       }}
       whileHover={{ y: -4 }}
       onClick={handleCardClick}
-      className={`bg-slate-900/30 backdrop-blur-3xl rounded-3xl p-6 shadow-2xl border transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center text-center min-h-[165px] cursor-pointer group ${cardBorderColor}`}
+      className={`bg-slate-900/40 backdrop-blur-3xl rounded-3xl p-5 sm:p-6 shadow-xl border transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-between text-center min-h-[175px] cursor-pointer group ${cardBorderColor}`}
     >
       {/* Wave Background Canvas */}
       <canvas
@@ -123,26 +123,34 @@ const LiquidWaveCard = ({
       />
 
       {/* Absolute positioned indicator icons in top-right */}
-      <div className="absolute top-4.5 right-4.5 flex items-center gap-1.5 z-10">
+      <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10">
         {isSafe ? (
-          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
         ) : (
-          <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 animate-pulse" />
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 animate-pulse" />
         )}
-        <HelpCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-450 transition-colors shrink-0" />
+        <HelpCircle className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors shrink-0" />
       </div>
 
       {/* Center-aligned Title Header */}
-      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest z-10 relative mb-3">{title}</span>
+      <span className="text-xs font-bold text-slate-300 uppercase tracking-wider z-10 relative">{title}</span>
 
       {/* Centered Value */}
-      <div className="z-10 relative flex flex-col items-center">
-        <h2 className="text-3xl font-black text-slate-100 tracking-tight leading-none mt-1">
-          {val.toFixed(2)} <span className="text-xs font-black text-slate-500 uppercase ml-0.5">{unit}</span>
+      <div className="z-10 relative flex flex-col items-center my-auto py-2">
+        <h2 className="text-3xl font-black text-slate-100 tracking-tight leading-none">
+          {val.toFixed(2)} <span className="text-xs font-bold text-slate-400 uppercase ml-0.5">{unit}</span>
         </h2>
-        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-2.5">
-          {isSafe ? "Status: Optimal" : "Status: Out of range"}
-        </p>
+      </div>
+
+      {/* Bottom Status pill */}
+      <div className="z-10 relative">
+        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+          isSafe
+            ? "bg-green-950/40 border-green-800/40 text-green-400"
+            : "bg-red-950/40 border-red-800/40 text-red-400"
+        }`}>
+          {isSafe ? "Status: Optimal" : "Status: Out of Range"}
+        </span>
       </div>
     </motion.div>
   );

@@ -244,7 +244,7 @@ function PredictionResult({ result, parameters, processingTime }) {
               {result.prediction}
             </span>
           </div>
-          <span className="text-[10px] text-slate-450 block font-semibold">
+          <span className="text-[10px] text-slate-400 block font-semibold">
             {isPotable ? "Safe for drinking" : "Requires treatment"}
           </span>
         </div>
@@ -258,7 +258,7 @@ function PredictionResult({ result, parameters, processingTime }) {
             </span>
             <span className="text-[10px] text-slate-500 font-bold">/ 100</span>
           </div>
-          <span className="text-[10px] text-slate-450 block font-semibold">
+          <span className="text-[10px] text-slate-400 block font-semibold">
             Status: {wqi >= 80 ? "Excellent" : wqi >= 60 ? "Good" : wqi >= 50 ? "Fair" : "Poor"}
           </span>
         </div>
@@ -271,7 +271,7 @@ function PredictionResult({ result, parameters, processingTime }) {
               {riskLevel}
             </span>
           </div>
-          <span className="text-[10px] text-slate-455 block font-semibold">
+          <span className="text-[10px] text-slate-400 block font-semibold">
             {riskLevel === "Low" ? "Negligible risk" : riskLevel === "Medium" ? "Elevated concern" : "Critical danger"}
           </span>
         </div>
@@ -284,7 +284,7 @@ function PredictionResult({ result, parameters, processingTime }) {
               {whoCompliance.label}
             </span>
           </div>
-          <span className="text-[10px] text-slate-455 block font-semibold">
+          <span className="text-[10px] text-slate-400 block font-semibold">
             Standards guidelines status
           </span>
         </div>
@@ -292,9 +292,9 @@ function PredictionResult({ result, parameters, processingTime }) {
 
       <div className="space-y-4">
         {/* Confidence progress */}
-        <div className="space-y-2 p-4.5 rounded-2xl bg-slate-955/30 border border-slate-850/60">
+        <div className="space-y-2 p-4.5 rounded-2xl bg-slate-950/40 border border-slate-850/60">
           <div className="flex justify-between text-xs font-bold">
-            <span className="text-slate-400 flex items-center gap-1.5"><TrendingUp size={14} className="text-cyan-405" /> Analysis Confidence</span>
+            <span className="text-slate-400 flex items-center gap-1.5"><TrendingUp size={14} className="text-cyan-400" /> Analysis Confidence</span>
             <span className={`font-black ${isPotable ? "text-green-400" : "text-red-400"}`}>{result.confidence}%</span>
           </div>
           <div className="h-2 w-full bg-slate-950 border border-slate-850 rounded-full overflow-hidden mt-1">
@@ -308,9 +308,9 @@ function PredictionResult({ result, parameters, processingTime }) {
         </div>
 
         {/* ═══ Affected Parameters Section ═══ */}
-        <div className="p-4.5 rounded-2xl bg-slate-955/30 border border-slate-850/60 space-y-3">
+        <div className="p-4.5 rounded-2xl bg-slate-950/40 border border-slate-850/60 space-y-3">
           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <AlertTriangle size={12} className="text-yellow-405" /> Out of Range Parameters ({affectedParams.length})
+            <AlertTriangle size={12} className="text-yellow-400" /> Out of Range Parameters ({affectedParams.length})
           </span>
           {affectedParams.length === 0 ? (
             <div className="flex items-center gap-2 p-3 rounded-xl bg-green-950/10 border border-green-900/20 text-green-400 text-xs font-semibold">
@@ -324,7 +324,7 @@ function PredictionResult({ result, parameters, processingTime }) {
                   key={i}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold ${
                     p.status === "critical" 
-                      ? "text-red-450 bg-red-950/15 border-red-800/30" 
+                      ? "text-red-400 bg-red-950/15 border-red-800/30" 
                       : "text-yellow-400 bg-yellow-950/15 border-yellow-800/30"
                   }`}
                 >
@@ -359,7 +359,7 @@ function PredictionResult({ result, parameters, processingTime }) {
               </span>
               <div className="space-y-2.5">
                 {reasons.map((reason, idx) => (
-                  <div key={idx} className="flex gap-3 text-xs text-slate-350 leading-relaxed font-semibold">
+                  <div key={idx} className="flex gap-3 text-xs text-slate-300 leading-relaxed font-semibold">
                     <span className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${isPotable ? "bg-green-500" : "bg-red-500"}`} />
                     <span>{reason}</span>
                   </div>
@@ -451,7 +451,7 @@ function PredictionResult({ result, parameters, processingTime }) {
                         : "text-green-400 bg-green-950/10 border-green-800/30";
 
                     return (
-                      <div key={index} className="flex flex-col gap-2 p-3.5 rounded-xl bg-slate-955/40 border border-slate-900/60">
+                      <div key={index} className="flex flex-col gap-2 p-3.5 rounded-xl bg-slate-950/40 border border-slate-900/60">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
                             <div className={`p-1.5 rounded-lg border ${badgeColor} shrink-0`}>

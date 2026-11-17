@@ -14,7 +14,7 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
 
   // 3. Determine status classification
   let statusText = "Extremely Good";
-  let statusColor = "text-emerald-450";
+  let statusColor = "text-emerald-400";
   let ringColor = "#10b981"; // Emerald
 
   if (wqs < 50) {
@@ -104,7 +104,7 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
       {/* Parameter Breakdown Checklist */}
       <div className="w-full grid grid-cols-2 gap-3 mt-4">
         {/* pH check */}
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-955/40 border border-slate-850 justify-start">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/40 border border-slate-800/60 justify-start">
           {phScore >= 80 ? (
             <div className="w-4 h-4 rounded-full bg-emerald-950/30 border border-emerald-800/40 flex items-center justify-center shrink-0">
               <Check className="w-2.5 h-2.5 text-emerald-400" />
@@ -114,11 +114,11 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
               <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
             </div>
           )}
-          <span className="text-[9px] font-bold text-slate-450 uppercase tracking-wider truncate">pH level</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">pH level</span>
         </div>
 
         {/* Turbidity check */}
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-955/40 border border-slate-850 justify-start">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/40 border border-slate-800/60 justify-start">
           {turbScore >= 80 ? (
             <div className="w-4 h-4 rounded-full bg-emerald-950/30 border border-emerald-800/40 flex items-center justify-center shrink-0">
               <Check className="w-2.5 h-2.5 text-emerald-400" />
@@ -128,11 +128,11 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
               <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
             </div>
           )}
-          <span className="text-[9px] font-bold text-slate-450 uppercase tracking-wider truncate">Turbidity</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">Turbidity</span>
         </div>
 
         {/* TDS check */}
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-955/40 border border-slate-850 justify-start">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/40 border border-slate-800/60 justify-start">
           {tdsScore >= 80 ? (
             <div className="w-4 h-4 rounded-full bg-emerald-950/30 border border-emerald-800/40 flex items-center justify-center shrink-0">
               <Check className="w-2.5 h-2.5 text-emerald-400" />
@@ -142,11 +142,11 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
               <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
             </div>
           )}
-          <span className="text-[9px] font-bold text-slate-450 uppercase tracking-wider truncate">TDS Index</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">TDS Index</span>
         </div>
 
         {/* Temp check */}
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-955/40 border border-slate-850 justify-start">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/40 border border-slate-800/60 justify-start">
           {tempScore >= 80 ? (
             <div className="w-4 h-4 rounded-full bg-emerald-950/30 border border-emerald-800/40 flex items-center justify-center shrink-0">
               <Check className="w-2.5 h-2.5 text-emerald-400" />
@@ -156,7 +156,7 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
               <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
             </div>
           )}
-          <span className="text-[9px] font-bold text-slate-450 uppercase tracking-wider truncate">Temperature</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">Temperature</span>
         </div>
       </div>
     </div>

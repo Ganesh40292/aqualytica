@@ -24,6 +24,8 @@ const Navbar = () => {
         return "System Error Console";
       case "/about":
         return "About Aqualytica";
+      case "/handbook":
+        return "Water Safety Handbook";
       case "/profile":
         return "User Profile";
       case "/settings":
@@ -37,21 +39,22 @@ const Navbar = () => {
 
   // Stateful live logs notification registry
   const [notifications, setNotifications] = useState([
-    { id: 1, text: "Aqualytica AI core successfully initialized", time: "1 min ago", read: false },
-    { id: 2, text: "Random Forest ML model loaded (Accuracy: 84.62%)", time: "3 min ago", read: false },
-    { id: 3, text: "WiFi telemetry stream synchronized with ESP32 node", time: "6 min ago", read: true }
+    { id: 1, text: "Aqualytica AI core initialized with 5-feature standardized pipeline", time: "1 min ago", read: false },
+    { id: 2, text: "Random Forest ML model verified (Testing Accuracy: 82.60%, Precision: 89.06%)", time: "3 min ago", read: false },
+    { id: 3, text: "Telemetry gateway connected to Mosquitto MQTT broker on port 1883", time: "5 min ago", read: false },
+    { id: 4, text: "PostgreSQL ledger operational on Supabase cloud cluster", time: "8 min ago", read: true }
   ]);
 
   // Periodically insert live system verification logs
   useEffect(() => {
     const logs = [
-      "Vite dev server re-optimization check: COMPLETE",
-      "Spring Boot REST service status check: HEALTHY",
-      "Python Flask model classification latency check: 12ms",
-      "Sensor probe auto-calibration offset adjusted",
-      "MySQL database ledger transaction integrity: OK",
-      "Telemetry WiFi signal check: -47 dBm (Excellent)",
-      "ML model confidence prediction thresholds checked"
+      "Spring Boot REST service status check: HEALTHY (:8080)",
+      "Python Flask inference service latency check: 0.03 ms (:5000)",
+      "Supabase PostgreSQL transaction ledger sync: VERIFIED",
+      "ESP32 firmware multi-channel acquisition: GPIO 34, 4, 35, 32",
+      "Calculated Conductivity sync: EC = TDS × 2.0 µS/cm verified",
+      "Anomaly detection guardrails: 5 physical parametric bounds active",
+      "ML feature scaler vector synchronized (5-feature standard normal)"
     ];
 
     const interval = setInterval(() => {
@@ -63,9 +66,9 @@ const Navbar = () => {
           time: "Just now",
           read: false
         },
-        ...prev.slice(0, 7) // Limit to 8 recent entries
+        ...prev.slice(0, 9) // Limit to 10 recent entries
       ]);
-    }, 25000); // Push a new log entry every 25 seconds
+    }, 20000); // Push a new log entry every 20 seconds
 
     return () => clearInterval(interval);
   }, []);

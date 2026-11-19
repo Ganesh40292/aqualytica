@@ -8,7 +8,6 @@ import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
 import { useToast } from "../../context/ToastContext";
 import ESP32StatusPanel from "../../components/telemetry/ESP32StatusPanel";
 import SensorHealthPanel from "../../components/telemetry/SensorHealthPanel";
-import CalculatedParametersPanel from "../../components/telemetry/CalculatedParametersPanel";
 import TelemetryDataStreamParticles from "../../components/telemetry/TelemetryDataStreamParticles";
 import ExportButton from "../../components/common/ExportButton";
 import { exportExactPageToPDF } from "../../utils/exportUtils";
@@ -392,8 +391,8 @@ const Telemetry = () => {
         </div>
       )}
 
-      {/* Hardware Node Status, Diagnostics, and Calculated Metrics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+      {/* Hardware Node Status and Diagnostics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
         {/* Panel 1: ESP32 Hardware Controller Monitor */}
         <ESP32StatusPanel dataSource={activeESP32Data} />
 
@@ -406,13 +405,6 @@ const Telemetry = () => {
           conductivity={recentData ? recentData.conductivity : 360.0}
           temperatureValid={recentData ? recentData.temperatureValid !== false : true}
           isAnomaly={recentData ? !!recentData.isAnomaly : false}
-        />
-
-        {/* Panel 3: Scientific Calculated Parameters & Model Diagnostics */}
-        <CalculatedParametersPanel
-          data={recentData}
-          onTriggerTest={handleTriggerHardwareTest}
-          isTesting={isTesting}
         />
       </div>
 

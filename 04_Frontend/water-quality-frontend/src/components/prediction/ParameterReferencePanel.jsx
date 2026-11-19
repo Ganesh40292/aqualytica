@@ -1,131 +1,155 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, BookOpen, Activity, Thermometer, Wind, Layers, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+import { BookOpen, Activity, Thermometer, Wind, Layers, Zap, Brain, ShieldCheck } from "lucide-react";
 
+/**
+ * Section 2: Prominent Parameter Target Ranges & Statutory Benchmark Reference
+ * Displayed directly below Water Sample Analysis in a spacious full-width grid.
+ */
 const parameterData = [
   {
-    name: "pH",
+    name: "pH Level",
     icon: Activity,
-    safeRange: "6.5 – 8.5",
+    safeRange: "6.5 – 8.5 pH",
     unit: "pH",
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-950/30 border-cyan-800/30",
+    badgeCls: "text-cyan-400 bg-cyan-950/60 border-cyan-800/60",
     barColor: "bg-cyan-500",
-    description: "Measures hydrogen-ion activity. Values below 6.5 indicate acidic water; above 8.5 indicates alkaline conditions."
-  },
-  {
-    name: "Temperature",
-    icon: Thermometer,
-    safeRange: "20°C – 30°C",
-    unit: "°C",
-    color: "text-rose-400",
-    bgColor: "bg-rose-950/30 border-rose-800/30",
-    barColor: "bg-rose-500",
-    description: "Water temperature affects dissolved oxygen levels and microbial activity. Optimal range supports safe biological processes."
-  },
-  {
-    name: "Total Dissolved Solids",
-    icon: Layers,
-    safeRange: "Less than 500 ppm",
-    unit: "mg/L",
-    color: "text-blue-400",
-    bgColor: "bg-blue-950/30 border-blue-800/30",
-    barColor: "bg-blue-500",
-    description: "Represents total dissolved minerals, salts, and organic matter. High TDS affects taste and may indicate contamination."
+    barWidth: "w-[80%]",
+    description:
+      "Measures hydrogen-ion concentration. Values within 6.5–8.5 prevent pipe corrosion and bitter alkaline taste."
   },
   {
     name: "Turbidity",
     icon: Wind,
-    safeRange: "Less than 1 NTU",
+    safeRange: "Max 1.0 NTU",
     unit: "NTU",
-    color: "text-teal-400",
-    bgColor: "bg-teal-950/30 border-teal-800/30",
-    barColor: "bg-teal-500",
-    description: "Measures water clarity by detecting suspended particles. High turbidity may harbor harmful microorganisms."
+    badgeCls: "text-teal-400 bg-teal-950/60 border-teal-800/60",
+    barColor: "bg-teal-400",
+    barWidth: "w-[65%]",
+    description:
+      "Measures suspended particulate cloudiness. Low turbidity ensures water clarity and effective disinfection."
   },
   {
-    name: "Conductivity",
+    name: "Total Dissolved Solids (TDS)",
+    icon: Layers,
+    safeRange: "Max 500 mg/L",
+    unit: "mg/L (ppm)",
+    badgeCls: "text-blue-400 bg-blue-950/60 border-blue-800/60",
+    barColor: "bg-blue-500",
+    barWidth: "w-[75%]",
+    description:
+      "Total concentration of dissolved mineral salts. Values below 500 mg/L guarantee pleasant taste and minimal scaling."
+  },
+  {
+    name: "Water Temperature",
+    icon: Thermometer,
+    safeRange: "15°C – 25°C Ideal",
+    unit: "°C",
+    badgeCls: "text-rose-400 bg-rose-950/60 border-rose-800/60",
+    barColor: "bg-rose-500",
+    barWidth: "w-[70%]",
+    description:
+      "Ambient sample temperature. Crucial for thermal compensation of pH and TDS analog probe calibration curves."
+  },
+  {
+    name: "Electrical Conductivity (EC)",
     icon: Zap,
-    safeRange: "200 – 800 µS/cm",
+    safeRange: "< 400 µS/cm",
     unit: "µS/cm",
-    color: "text-yellow-400",
-    bgColor: "bg-yellow-950/30 border-yellow-800/30",
-    barColor: "bg-yellow-500",
-    description: "Measures the water's ability to conduct electricity, indicating dissolved ion content and potential impurities."
+    badgeCls: "text-amber-400 bg-amber-950/60 border-amber-800/60",
+    barColor: "bg-amber-400",
+    barWidth: "w-[60%]",
+    description:
+      "Electric current conductance from dissolved ions. Functionally estimated as EC ≈ TDS × 2.0 µS/cm."
   }
 ];
 
 function ParameterReferencePanel() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="bg-slate-900/30 backdrop-blur-3xl border border-slate-800/40 rounded-3xl shadow-xl overflow-hidden hover:border-cyan-500/20 transition-all duration-300">
-      {/* Toggle Header */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-slate-950/20 transition-colors"
-      >
-        <div className="flex items-center gap-2.5">
-          <BookOpen className="w-5 h-5 text-cyan-400" />
-          <div>
-            <h3 className="text-sm font-bold text-slate-100">Parameter Reference</h3>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">
-              WHO Safe Range Guidelines
-            </p>
-          </div>
-        </div>
-        {isOpen ? (
-          <ChevronUp size={16} className="text-slate-400" />
-        ) : (
-          <ChevronDown size={16} className="text-slate-400" />
-        )}
-      </button>
+    <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 sm:space-y-8 relative overflow-hidden w-full">
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
-      {/* Collapsible Content */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-5 space-y-3">
-              {parameterData.map((param, index) => {
-                const Icon = param.icon;
-                return (
-                  <motion.div
-                    key={param.name}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-900/60 space-y-2"
+      {/* Section Header */}
+      <div className="flex items-center gap-3.5">
+        <div className="p-3 rounded-2xl bg-cyan-950/60 border border-cyan-800/60 text-cyan-400 shadow-md">
+          <BookOpen className="w-6 h-6" />
+        </div>
+        <div>
+          <span className="text-xs font-black uppercase tracking-widest text-cyan-400 block">
+            STATUTORY BENCHMARK REFERENCE
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            Parameter Target Ranges
+          </h2>
+        </div>
+      </div>
+
+      {/* Spacious 5-Card Responsive Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+        {parameterData.map((param, index) => {
+          const Icon = param.icon;
+
+          return (
+            <motion.div
+              key={param.name}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between space-y-3.5 group shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.1)] min-h-[175px]"
+            >
+              {/* Card Top: Icon, Title & Badge */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 group-hover:text-cyan-300 transition-colors shrink-0">
+                    <Icon size={16} />
+                  </div>
+                  <span
+                    className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border ${param.badgeCls}`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className={`flex items-center gap-2 text-xs font-bold ${param.color}`}>
-                        <div className={`p-1.5 rounded-lg border ${param.bgColor}`}>
-                          <Icon size={12} />
-                        </div>
-                        {param.name}
-                      </span>
-                      <span className="text-[10px] font-bold text-green-400 bg-green-950/40 border border-green-900/30 px-2 py-0.5 rounded">
-                        {param.safeRange}
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 leading-relaxed pl-8">
-                      {param.description}
-                    </p>
-                    <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden ml-8 max-w-[calc(100%-2rem)]">
-                      <div className={`h-full w-3/4 ${param.barColor} rounded-full opacity-60`} />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    {param.safeRange}
+                  </span>
+                </div>
+
+                <h3 className="text-sm font-black text-white group-hover:text-cyan-300 transition-colors">
+                  {param.name}
+                </h3>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                {param.description}
+              </p>
+
+              {/* Visual Target Bar */}
+              <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden pt-0.5">
+                <div
+                  className={`h-full ${param.barWidth} ${param.barColor} rounded-full transition-all duration-500 shadow-[0_0_8px_currentColor]`}
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Full-Width Machine Learning Evaluation Box */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-slate-950/80 border border-slate-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="space-y-1.5 max-w-3xl">
+          <div className="flex flex-wrap items-center gap-2.5 text-cyan-400 font-black text-sm uppercase tracking-wider">
+            <Brain className="w-5 h-5 text-cyan-400" />
+            <span className="text-white">Random Forest Classifier</span>
+            <span className="text-xs font-mono font-black text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-0.5 rounded-md">
+              100 Trees Ensemble
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+            Multi-layer classification engine validating 5-dimensional hydrodynamic parameters against standardized WHO thresholds.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-bold text-cyan-300 bg-cyan-950/40 border border-cyan-800/40 px-4 py-2.5 rounded-xl shrink-0 self-start lg:self-auto">
+          <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+          <span>Cross-validated decision consensus with anomaly scoring</span>
+        </div>
+      </div>
     </div>
   );
 }

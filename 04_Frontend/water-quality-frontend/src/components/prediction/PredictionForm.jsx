@@ -234,22 +234,22 @@ function PredictionForm({ onPredictionSuccess }) {
   };
 
   return (
-    <div className="mt-2">
-      <div className="bg-slate-900/20 backdrop-blur-3xl border border-slate-800/40 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+    <div className="w-full">
+      <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
         {/* Header Section with Presets & Quick Hardware Trigger */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/30 text-cyan-400">
+            <div className="p-3 rounded-2xl bg-cyan-950/60 border border-cyan-800/60 text-cyan-400 shadow-md">
               <SlidersHorizontal className="w-6 h-6 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-slate-100 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Water Sample Analysis
               </h2>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-                Enter sample parameters or trigger on-demand physical hardware measurement
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+                Manual Laboratory Simulation & Live ESP32 Hardware Acquisition
               </p>
             </div>
           </div>
@@ -260,7 +260,7 @@ function PredictionForm({ onPredictionSuccess }) {
               type="button"
               onClick={handleHardwareTest}
               disabled={hardwareLoading || loading}
-              className="px-3 py-2 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-800/50 text-emerald-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3.5 py-2 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/60 text-emerald-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
               title="Trigger real-time measurement from ESP32 node"
             >
               <Cpu className={`w-3.5 h-3.5 ${hardwareLoading ? "animate-spin text-emerald-300" : ""}`} />
@@ -280,7 +280,7 @@ function PredictionForm({ onPredictionSuccess }) {
                 setErrors({});
                 toast.showSuccess("Loaded Safe Drinking Water Preset");
               }}
-              className="px-3 py-2 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/50 text-cyan-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-800/60 text-cyan-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5" /> Safe Preset
             </button>
@@ -298,7 +298,7 @@ function PredictionForm({ onPredictionSuccess }) {
                 setErrors({});
                 toast.showWarning("Loaded Contaminated Water Preset");
               }}
-              className="px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800/60 text-rose-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
             >
               <Info className="w-3.5 h-3.5" /> Unsafe Preset
             </button>
@@ -308,12 +308,12 @@ function PredictionForm({ onPredictionSuccess }) {
         {/* Manual Parameter Input Form (METHOD 1) */}
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Model Guidance Notice */}
-          <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/40 text-cyan-200 text-xs flex items-start gap-3">
+          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-slate-300 text-xs flex items-start gap-3">
             <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-cyan-300">Analysis Methods Available:</span>
-              <p className="text-slate-300 mt-1">
-                You can manually test water quality metrics using <b className="text-cyan-400">Analyze Sample Potability</b> below, or initiate a live acquisition from physical ESP32 sensors using <b className="text-emerald-400">Start Hardware Test</b>.
+              <span className="font-bold text-cyan-300">Dual Analysis Modalities:</span>
+              <p className="text-slate-300 mt-0.5 leading-relaxed">
+                Enter physical-chemical parameters manually to test potability classification, or click <b className="text-emerald-400">Start Hardware Test</b> to acquire live readings directly from the ESP32 sensor cluster.
               </p>
             </div>
           </div>
@@ -322,7 +322,7 @@ function PredictionForm({ onPredictionSuccess }) {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
           >
             {sensorFields.map((field, idx) => {
               const Icon = field.icon;
@@ -333,16 +333,16 @@ function PredictionForm({ onPredictionSuccess }) {
                 <motion.div
                   key={field.name}
                   variants={itemVariants}
-                  className={`flex flex-col justify-between gap-3 p-5 rounded-2xl bg-slate-950/40 border border-slate-850/80 focus-within:border-cyan-500/40 transition-all duration-300 shadow-sm ${
-                    isSpanFull ? "md:col-span-2" : ""
+                  className={`flex flex-col justify-between gap-3 p-5 sm:p-6 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-500/40 focus-within:border-cyan-500/70 transition-all duration-300 shadow-md ${
+                    isSpanFull ? "md:col-span-2 lg:col-span-2" : ""
                   }`}
                 >
-                  <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                  <label className="text-xs font-black text-slate-200 flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <Icon className="w-4 h-4 text-cyan-400" />
                       {field.label}
                     </span>
-                    <span className="text-[10px] text-cyan-400 font-mono bg-cyan-950/40 border border-cyan-800/40 rounded-md px-2 py-0.5 font-bold">
+                    <span className="text-[10px] text-cyan-300 font-mono bg-slate-900 border border-slate-700/80 rounded-md px-2 py-0.5 font-bold">
                       {field.unit}
                     </span>
                   </label>
@@ -356,15 +356,15 @@ function PredictionForm({ onPredictionSuccess }) {
                       value={formData[field.name]}
                       onChange={handleChange}
                       required
-                      className={`w-full bg-slate-950/80 border rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 transition-all text-sm font-semibold font-mono ${
+                      className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-1 transition-all text-sm font-bold font-mono ${
                         hasError
-                          ? "border-red-500/50 focus:ring-red-500/10"
-                          : "border-slate-800 focus:border-cyan-500/50 focus:ring-cyan-500/10"
+                          ? "border-red-500/60 focus:ring-red-500/20"
+                          : "border-slate-700/80 focus:border-cyan-500 focus:ring-cyan-500/20"
                       }`}
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1 text-[11px] font-medium pt-1 border-t border-slate-900/60">
+                  <div className="flex flex-col gap-1 text-[11px] font-medium pt-1.5 border-t border-slate-800/60">
                     <span className="text-slate-400 flex items-center gap-1.5">
                       <Info size={12} className="text-slate-500 shrink-0" />
                       {rangeInfo[field.name]}
@@ -382,7 +382,7 @@ function PredictionForm({ onPredictionSuccess }) {
 
           {/* Hardware Error Notice Banner with Retry Action */}
           {hardwareError && (
-            <div className="p-4 rounded-xl bg-red-950/30 border border-red-800/40 text-red-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-red-950/40 border border-red-800/60 text-red-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-2.5">
                 <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
@@ -395,7 +395,7 @@ function PredictionForm({ onPredictionSuccess }) {
                   type="button"
                   onClick={handleHardwareTest}
                   disabled={hardwareLoading}
-                  className="px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-800/60 border border-red-700/50 text-red-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl bg-red-900/40 hover:bg-red-800/60 border border-red-700/60 text-red-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <RotateCcw className={`w-3.5 h-3.5 ${hardwareLoading ? "animate-spin" : ""}`} />
                   <span>Retry</span>
@@ -403,24 +403,24 @@ function PredictionForm({ onPredictionSuccess }) {
                 <button
                   type="button"
                   onClick={() => setHardwareError(null)}
-                  className="text-slate-400 hover:text-slate-200 text-xs p-1 cursor-pointer"
+                  className="text-slate-400 hover:text-slate-200 text-xs p-1.5 cursor-pointer"
                   title="Dismiss notice"
                 >
-                  <X size={14} />
+                  <X size={15} />
                 </button>
               </div>
             </div>
           )}
 
           {/* DUAL ACTION BUTTON CONTAINER: METHOD 1 & METHOD 2 */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 pt-4 border-t border-slate-800/40">
-            {/* BUTTON 1: EXISTING MANUAL ANALYSIS (PRESERVED 100%) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 pb-2 border-t border-slate-800/60">
+            {/* BUTTON 1: EXISTING MANUAL ANALYSIS */}
             <motion.button
               type="submit"
               disabled={loading || hardwareLoading}
-              whileHover={{ scale: 1.03, boxShadow: "0 0 25px rgba(6, 182, 212, 0.5)" }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(6, 182, 212, 0.4)" }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-600 to-teal-500 hover:from-cyan-500 hover:to-teal-400 border border-cyan-400/40 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-slate-100 font-black text-sm uppercase tracking-widest rounded-xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(6,182,212,0.25)] flex items-center justify-center gap-3"
+              className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 border border-cyan-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2.5"
             >
               {loading ? (
                 <>
@@ -435,14 +435,14 @@ function PredictionForm({ onPredictionSuccess }) {
               )}
             </motion.button>
 
-            {/* BUTTON 2: NEW INDEPENDENT REAL-TIME HARDWARE TEST */}
+            {/* BUTTON 2: INDEPENDENT REAL-TIME HARDWARE TEST */}
             <motion.button
               type="button"
               onClick={handleHardwareTest}
               disabled={hardwareLoading || loading}
-              whileHover={{ scale: 1.03, boxShadow: "0 0 25px rgba(16, 185, 129, 0.5)" }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(16, 185, 129, 0.4)" }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/40 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-slate-100 font-black text-sm uppercase tracking-widest rounded-xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(16,185,129,0.25)] flex items-center justify-center gap-3"
+              className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2.5"
             >
               {hardwareLoading ? (
                 <>

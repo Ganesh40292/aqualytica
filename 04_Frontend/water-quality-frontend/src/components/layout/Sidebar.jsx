@@ -287,7 +287,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="flex items-center gap-2"><Database size={13} className="text-slate-500" /> Database MySQL</span>
+              <span className="flex items-center gap-2"><Database size={13} className="text-slate-500" /> Supabase PostgreSQL</span>
               <span className={`w-2.5 h-2.5 rounded-full ${getStatusDot(status.db)}`} />
             </div>
 

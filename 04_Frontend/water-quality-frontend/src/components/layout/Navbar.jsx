@@ -12,6 +12,8 @@ const Navbar = () => {
     switch (path) {
       case "/":
         return "Water Quality Dashboard";
+      case "/bis-standards":
+        return "BIS Water Quality Standards";
       case "/prediction":
         return "Water Analysis Node";
       case "/telemetry":

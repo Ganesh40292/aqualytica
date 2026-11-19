@@ -49,7 +49,7 @@ const AboutProject = () => {
                 <div>
                   <h4 className="text-slate-200 text-sm">Spring Boot REST API</h4>
                   <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                    Serves as a robust backend gateway, mapping incoming telemetry data into a local relational MySQL database.
+                    Serves as a robust backend gateway, mapping incoming telemetry data into a Supabase cloud relational PostgreSQL database.
                   </p>
                 </div>
               </div>

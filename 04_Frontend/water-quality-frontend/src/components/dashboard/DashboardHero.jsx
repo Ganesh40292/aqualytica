@@ -16,7 +16,7 @@ function DashboardHero() {
             Aqualytica Telemetry Operations Center
           </h2>
           <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">
-            Continuous environmental telemetry ingestion, physical sensor bound audits & machine learning potability classification.
+            Continuous environmental telemetry ingestion, physical sensor bound audits & machine learning-based water quality classification.
           </p>
         </div>
       </div>

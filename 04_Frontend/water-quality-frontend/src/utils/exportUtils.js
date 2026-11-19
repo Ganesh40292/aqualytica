@@ -154,7 +154,7 @@ export const exportToPDF = (reportTitle, subtitle, tableHeaders, tableRows, summ
             <p>${reportTitle} &mdash; ${subtitle}</p>
           </div>
           <div class="stamp-badge">
-            OFFICIAL LAB REPORT<br>
+            AQUALYTICA TELEMETRY & ML EVALUATION REPORT<br>
             <span style="font-size: 8px; opacity: 0.8;">ML Engine: Random Forest</span>
           </div>
         </div>
@@ -185,6 +185,10 @@ export const exportToPDF = (reportTitle, subtitle, tableHeaders, tableRows, summ
 
         <div class="annotation">
           * Electrical Conductivity (EC) is calculated dynamically via formula: EC = TDS &times; 2.0 &mu;S/cm.
+        </div>
+
+        <div class="annotation" style="text-align: center; margin-top: 15px; color: #64748b; font-size: 10px;">
+          * Indicative Assessment: Reported metrics represent calibrated sensor telemetry and machine learning classifications, not statutory drinking-water laboratory certification.
         </div>
 
         <div class="footer">

@@ -26,7 +26,7 @@ const SystemInfoFooter = () => {
           <FileCheck className="w-4 h-4 text-green-400 shrink-0" />
           <div>
             <h4 className="text-slate-200">Database</h4>
-            <p className="text-[10px] text-slate-500 mt-0.5">MySQL Local Server</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Supabase PostgreSQL</p>
           </div>
         </div>
 

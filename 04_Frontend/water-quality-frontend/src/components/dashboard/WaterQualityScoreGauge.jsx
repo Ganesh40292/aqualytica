@@ -44,7 +44,7 @@ const WaterQualityScoreGauge = ({ ph = 7.2, turbidity = 0.8, tds = 180, temp = 2
       
       <div className="w-full text-center">
         <h3 className="text-sm font-black text-slate-100 uppercase tracking-widest">Water Purity Index</h3>
-        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Real-time Composite Health Index</p>
+        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Indicative Composite Index of Monitored Sensor Parameters</p>
       </div>
 
       {/* Radial Progress SVG */}

@@ -54,6 +54,7 @@ public class HistoryServiceImpl implements HistoryService {
                 .prediction(history.getPrediction())
                 .confidence(history.getConfidence())
                 .predictedAt(history.getPredictedAt().toString())
+                .createdAt(history.getSensorData() != null && history.getSensorData().getCreatedAt() != null ? history.getSensorData().getCreatedAt().toString() : null)
                 .ph(history.getSensorData().getPh())
                 .temperature(history.getSensorData().getTemperature())
                 .turbidity(history.getSensorData().getTurbidity())

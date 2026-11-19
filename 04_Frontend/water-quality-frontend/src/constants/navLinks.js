@@ -7,7 +7,8 @@ import {
   Activity,
   AlertTriangle,
   HelpCircle,
-  BookOpen
+  BookOpen,
+  ShieldCheck
 } from "lucide-react";
 
 const navLinks = [
@@ -15,6 +16,11 @@ const navLinks = [
     path: "/",
     label: "Dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    path: "/bis-standards",
+    label: "BIS Standards",
+    icon: ShieldCheck,
   },
   {
     path: "/prediction",

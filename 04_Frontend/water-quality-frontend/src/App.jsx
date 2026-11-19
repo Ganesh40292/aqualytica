@@ -5,6 +5,7 @@ import Layout from "./components/layout/Layout";
 import InitialLoader from "./components/common/InitialLoader";
 import AuthPage from "./pages/Auth/AuthPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import BisStandards from "./pages/BisStandards/BisStandards";
 import Prediction from "./pages/Prediction/Prediction";
 import Telemetry from "./pages/Telemetry/Telemetry";
 import History from "./pages/History/History";
@@ -62,6 +63,7 @@ function App() {
                   <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                       <Route path="/" element={<Dashboard />} />
+                      <Route path="/bis-standards" element={<BisStandards />} />
                       <Route path="/prediction" element={<Prediction />} />
                       <Route path="/telemetry" element={<Telemetry />} />
                       <Route path="/history" element={<History />} />

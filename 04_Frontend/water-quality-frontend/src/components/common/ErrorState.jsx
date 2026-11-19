@@ -14,7 +14,7 @@ const ErrorState = ({ message, onRetry }) => {
       </h3>
       
       <p className="text-slate-450 mt-3 text-sm max-w-md leading-relaxed">
-        {message || "Unable to establish connection to the Spring Boot REST API at localhost:8080. Ensure the backend gateway service is active and local MySQL server instance is online."}
+        {message || "Unable to establish connection to the Spring Boot REST API at localhost:8080. Ensure the backend gateway service is active and the Supabase database instance is reachable."}
       </p>
 
       {onRetry && (

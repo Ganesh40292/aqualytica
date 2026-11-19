@@ -17,6 +17,7 @@ public class HistoryResponse {
     private String prediction;
     private Double confidence;
     private String predictedAt;
+    private String createdAt;
     private Double ph;
     private Double temperature;
     private Double turbidity;

@@ -190,14 +190,18 @@ function PredictionForm({ onPredictionSuccess }) {
       let errorMsg = "Hardware acquisition failed. Verify backend and ESP32 connection.";
       if (err.response?.status === 409) {
         errorMsg = err.response?.data?.message || err.response?.data?.detail || "ESP32 hardware is currently busy executing another routine. Please retry shortly.";
-      } else if (err.response?.status === 504) {
-        errorMsg = "ESP32 hardware did not respond within the 10-second timeout window. Please ensure device is powered on and connected to hotspot.";
+      } else if (err.response?.status === 504 || err.response?.data?.message?.includes("timeout") || err.message?.includes("504")) {
+        errorMsg = "ESP32 hardware did not respond within the 10-second timeout window. Please ensure device is powered on and connected to hotspot (SSID: 'test').";
       } else if (err.response?.status === 429) {
         errorMsg = err.response?.data?.message || err.response?.data?.detail || "Rate limit reached. Please wait a moment before retriggering.";
       } else if (err.response?.status === 500) {
         const detail = err.response?.data?.message || err.response?.data?.detail;
         if (detail && typeof detail === "string") {
-          errorMsg = detail;
+          if (detail.includes("timeout") || detail.includes("504") || detail.includes("GATEWAY_TIMEOUT")) {
+            errorMsg = "ESP32 hardware did not respond within the 10-second timeout window. Please ensure device is powered on and connected to hotspot (SSID: 'test').";
+          } else {
+            errorMsg = detail;
+          }
         } else {
           errorMsg = "Hardware acquisition error occurred on ESP32/MQTT bridge. Please verify ESP32 is powered on and retry.";
         }
@@ -208,6 +212,9 @@ function PredictionForm({ onPredictionSuccess }) {
       } else if (err.message && typeof err.message === "string" && !err.message.includes("status code")) {
         errorMsg = err.message;
       }
+
+      // Strip any raw HTTP status prefixes or quote wraps like: 504 GATEWAY_TIMEOUT "..."
+      errorMsg = errorMsg.replace(/^(504\s*GATEWAY_TIMEOUT|500\s*INTERNAL_SERVER_ERROR|409\s*CONFLICT)\s*"?/i, "").replace(/"$/, "");
 
       console.warn("Hardware test notification:", errorMsg);
       setHardwareError(errorMsg);
@@ -235,35 +242,35 @@ function PredictionForm({ onPredictionSuccess }) {
 
   return (
     <div className="w-full">
-      <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+      <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
         {/* Header Section with Presets & Quick Hardware Trigger */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-2xl bg-cyan-950/60 border border-cyan-800/60 text-cyan-400 shadow-md">
-              <SlidersHorizontal className="w-6 h-6 animate-pulse" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+          <div className="flex items-center gap-4">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-cyan-950/60 border border-cyan-800/60 text-cyan-400 shadow-lg">
+              <SlidersHorizontal className="w-7 h-7 sm:w-8 sm:h-8 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
                 Water Sample Analysis
               </h2>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              <p className="text-xs sm:text-sm lg:text-base font-bold text-slate-300 uppercase tracking-wider mt-1">
                 Manual Laboratory Simulation & Live ESP32 Hardware Acquisition
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Quick Hardware Action Header Pill */}
             <button
               type="button"
               onClick={handleHardwareTest}
               disabled={hardwareLoading || loading}
-              className="px-3.5 py-2 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/60 text-emerald-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+              className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-700/60 text-emerald-400 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50 shadow-md"
               title="Trigger real-time measurement from ESP32 node"
             >
-              <Cpu className={`w-3.5 h-3.5 ${hardwareLoading ? "animate-spin text-emerald-300" : ""}`} />
+              <Cpu className={`w-4 h-4 sm:w-5 sm:h-5 ${hardwareLoading ? "animate-spin text-emerald-300" : ""}`} />
               <span>{hardwareLoading ? "Acquiring..." : "Trigger Hardware"}</span>
             </button>
 
@@ -280,9 +287,9 @@ function PredictionForm({ onPredictionSuccess }) {
                 setErrors({});
                 toast.showSuccess("Loaded Safe Drinking Water Preset");
               }}
-              className="px-3.5 py-2 rounded-xl bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-800/60 text-cyan-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+              className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-cyan-950/60 hover:bg-cyan-900/70 border border-cyan-700/60 text-cyan-400 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-md"
             >
-              <Sparkles className="w-3.5 h-3.5" /> Safe Preset
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> Safe Preset
             </button>
 
             <button
@@ -298,22 +305,22 @@ function PredictionForm({ onPredictionSuccess }) {
                 setErrors({});
                 toast.showWarning("Loaded Contaminated Water Preset");
               }}
-              className="px-3.5 py-2 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800/60 text-rose-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+              className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 border border-rose-700/60 text-rose-400 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-md"
             >
-              <Info className="w-3.5 h-3.5" /> Unsafe Preset
+              <Info className="w-4 h-4 sm:w-5 sm:h-5" /> Unsafe Preset
             </button>
           </div>
         </div>
 
         {/* Manual Parameter Input Form (METHOD 1) */}
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10">
           {/* Model Guidance Notice */}
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-slate-300 text-xs flex items-start gap-3">
-            <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="p-5 sm:p-6 rounded-2xl bg-slate-950/70 border border-slate-800 text-slate-200 text-sm sm:text-base flex items-start gap-4">
+            <Info className="w-6 h-6 text-cyan-400 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-cyan-300">Dual Analysis Modalities:</span>
-              <p className="text-slate-300 mt-0.5 leading-relaxed">
-                Enter physical-chemical parameters manually to test potability classification, or click <b className="text-emerald-400">Start Hardware Test</b> to acquire live readings directly from the ESP32 sensor cluster.
+              <span className="font-black text-cyan-300 text-base sm:text-lg">Dual Analysis Modalities:</span>
+              <p className="text-slate-200 mt-1 leading-relaxed text-sm sm:text-base font-normal">
+                Enter physical-chemical parameters manually to test potability classification, or click <b className="text-emerald-400 font-bold">Start Hardware Test</b> to acquire live readings directly from the ESP32 sensor cluster.
               </p>
             </div>
           </div>
@@ -322,7 +329,7 @@ function PredictionForm({ onPredictionSuccess }) {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
           >
             {sensorFields.map((field, idx) => {
               const Icon = field.icon;
@@ -333,16 +340,16 @@ function PredictionForm({ onPredictionSuccess }) {
                 <motion.div
                   key={field.name}
                   variants={itemVariants}
-                  className={`flex flex-col justify-between gap-3 p-5 sm:p-6 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-500/40 focus-within:border-cyan-500/70 transition-all duration-300 shadow-md ${
+                  className={`flex flex-col justify-between gap-4 p-6 sm:p-7 rounded-3xl bg-slate-950/70 border border-slate-800 hover:border-cyan-500/50 focus-within:border-cyan-500/80 transition-all duration-300 shadow-xl ${
                     isSpanFull ? "md:col-span-2 lg:col-span-2" : ""
                   }`}
                 >
-                  <label className="text-xs font-black text-slate-200 flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-cyan-400" />
+                  <label className="text-sm sm:text-base font-black text-white flex items-center justify-between">
+                    <span className="flex items-center gap-2.5">
+                      <Icon className="w-5 h-5 text-cyan-400" />
                       {field.label}
                     </span>
-                    <span className="text-[10px] text-cyan-300 font-mono bg-slate-900 border border-slate-700/80 rounded-md px-2 py-0.5 font-bold">
+                    <span className="text-xs sm:text-sm text-cyan-300 font-mono bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-1 font-bold">
                       {field.unit}
                     </span>
                   </label>
@@ -356,21 +363,21 @@ function PredictionForm({ onPredictionSuccess }) {
                       value={formData[field.name]}
                       onChange={handleChange}
                       required
-                      className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-1 transition-all text-sm font-bold font-mono ${
+                      className={`w-full bg-slate-900/90 border rounded-2xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 transition-all text-base sm:text-lg font-bold font-mono tracking-wider ${
                         hasError
-                          ? "border-red-500/60 focus:ring-red-500/20"
-                          : "border-slate-700/80 focus:border-cyan-500 focus:ring-cyan-500/20"
+                          ? "border-red-500/60 focus:ring-red-500/30"
+                          : "border-slate-700/80 focus:border-cyan-500 focus:ring-cyan-500/30"
                       }`}
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1 text-[11px] font-medium pt-1.5 border-t border-slate-800/60">
-                    <span className="text-slate-400 flex items-center gap-1.5">
-                      <Info size={12} className="text-slate-500 shrink-0" />
+                  <div className="flex flex-col gap-1.5 text-xs sm:text-sm font-semibold pt-2 border-t border-slate-800/80">
+                    <span className="text-slate-300 flex items-center gap-2">
+                      <Info size={16} className="text-slate-400 shrink-0" />
                       {rangeInfo[field.name]}
                     </span>
                     {hasError && (
-                      <span className="font-bold text-red-400 mt-0.5">
+                      <span className="font-bold text-red-400 mt-1">
                         {errors[field.name]}
                       </span>
                     )}
@@ -382,54 +389,54 @@ function PredictionForm({ onPredictionSuccess }) {
 
           {/* Hardware Error Notice Banner with Retry Action */}
           {hardwareError && (
-            <div className="p-4 rounded-2xl bg-red-950/40 border border-red-800/60 text-red-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-start gap-2.5">
-                <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            <div className="p-5 sm:p-6 rounded-2xl bg-red-950/50 border border-red-800/70 text-red-200 text-sm sm:text-base flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-6 h-6 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-red-300">Hardware Acquisition Notice:</span>
-                  <p className="text-slate-300 mt-0.5">{hardwareError}</p>
+                  <span className="font-black text-red-300 text-base">Hardware Acquisition Notice:</span>
+                  <p className="text-slate-300 mt-1">{hardwareError}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+              <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                 <button
                   type="button"
                   onClick={handleHardwareTest}
                   disabled={hardwareLoading}
-                  className="px-3.5 py-2 rounded-xl bg-red-900/40 hover:bg-red-800/60 border border-red-700/60 text-red-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl bg-red-900/50 hover:bg-red-800/70 border border-red-700/70 text-red-200 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2"
                 >
-                  <RotateCcw className={`w-3.5 h-3.5 ${hardwareLoading ? "animate-spin" : ""}`} />
+                  <RotateCcw className={`w-4 h-4 ${hardwareLoading ? "animate-spin" : ""}`} />
                   <span>Retry</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setHardwareError(null)}
-                  className="text-slate-400 hover:text-slate-200 text-xs p-1.5 cursor-pointer"
+                  className="text-slate-400 hover:text-slate-200 text-sm p-1.5 cursor-pointer"
                   title="Dismiss notice"
                 >
-                  <X size={15} />
+                  <X size={18} />
                 </button>
               </div>
             </div>
           )}
 
           {/* DUAL ACTION BUTTON CONTAINER: METHOD 1 & METHOD 2 */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 pb-2 border-t border-slate-800/60">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 pt-8 pb-4 border-t border-slate-800/60">
             {/* BUTTON 1: EXISTING MANUAL ANALYSIS */}
             <motion.button
               type="submit"
               disabled={loading || hardwareLoading}
-              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(6, 182, 212, 0.4)" }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 35px rgba(6, 182, 212, 0.45)" }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 border border-cyan-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2.5"
+              className="w-full sm:w-auto px-8 py-4 sm:px-12 sm:py-5 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 border border-cyan-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-sm sm:text-base lg:text-lg uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_30px_rgba(6,182,212,0.3)] flex items-center justify-center gap-3"
             >
               {loading ? (
                 <>
-                  <LoadingSpinner size="w-5 h-5" />
+                  <LoadingSpinner size="w-6 h-6" />
                   <span>Analyzing Water Sample...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-5 h-5 animate-pulse text-cyan-200" />
+                  <Sparkles className="w-6 h-6 animate-pulse text-cyan-200" />
                   <span>Analyze Sample Potability</span>
                 </>
               )}
@@ -440,18 +447,18 @@ function PredictionForm({ onPredictionSuccess }) {
               type="button"
               onClick={handleHardwareTest}
               disabled={hardwareLoading || loading}
-              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(16, 185, 129, 0.4)" }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 35px rgba(16, 185, 129, 0.45)" }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_25px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2.5"
+              className="w-full sm:w-auto px-8 py-4 sm:px-12 sm:py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/50 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700/40 text-white font-black text-sm sm:text-base lg:text-lg uppercase tracking-wider rounded-2xl transition-all duration-300 cursor-pointer shadow-[0_4px_30px_rgba(16,185,129,0.3)] flex items-center justify-center gap-3"
             >
               {hardwareLoading ? (
                 <>
-                  <LoadingSpinner size="w-5 h-5" />
+                  <LoadingSpinner size="w-6 h-6" />
                   <span>{hardwareStatus || "Acquiring Sensor Readings..."}</span>
                 </>
               ) : (
                 <>
-                  <Cpu className="w-5 h-5 text-emerald-200 animate-pulse" />
+                  <Cpu className="w-6 h-6 text-emerald-200 animate-pulse" />
                   <span>Start Hardware Test</span>
                 </>
               )}

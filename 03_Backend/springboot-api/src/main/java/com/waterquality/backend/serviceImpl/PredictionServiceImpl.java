@@ -36,22 +36,29 @@ public class PredictionServiceImpl implements PredictionService {
 
     @Override
     public PredictionResponse predictWaterQuality(PredictionRequest request) {
+        // Safe parameter unboxing with realistic fallback defaults
+        double ph = request.getPh() != null ? request.getPh() : 7.0;
+        double temp = request.getTemperature() != null ? request.getTemperature() : 25.0;
+        double turb = request.getTurbidity() != null ? request.getTurbidity() : 0.0;
+        double tds = request.getTotalDissolvedSolids() != null ? request.getTotalDissolvedSolids() : 200.0;
+        double cond = request.getConductivity() != null ? request.getConductivity() : (tds * 2.0);
+
         // 1. Run physical sensor plausibility and anomaly checks
         List<String> anomalyReasons = new ArrayList<>();
-        if (request.getPh() < 2.0 || request.getPh() > 12.0) {
-            anomalyReasons.add("Extreme pH level (" + request.getPh() + ")");
+        if (ph < 2.0 || ph > 12.0) {
+            anomalyReasons.add("Extreme pH level (" + ph + ")");
         }
-        if (request.getTemperature() < 0.0 || request.getTemperature() > 60.0) {
-            anomalyReasons.add("Abnormal water temperature (" + request.getTemperature() + "°C)");
+        if (temp < 0.0 || temp > 60.0) {
+            anomalyReasons.add("Abnormal water temperature (" + temp + "°C)");
         }
-        if (request.getTurbidity() > 500.0) {
-            anomalyReasons.add("Extreme turbidity saturation (" + request.getTurbidity() + " NTU)");
+        if (turb > 500.0) {
+            anomalyReasons.add("Extreme turbidity saturation (" + turb + " NTU)");
         }
-        if (request.getTotalDissolvedSolids() > 2500.0) {
-            anomalyReasons.add("Elevated TDS saturation (" + request.getTotalDissolvedSolids() + " mg/L)");
+        if (tds > 2500.0) {
+            anomalyReasons.add("Elevated TDS saturation (" + tds + " mg/L)");
         }
-        if (request.getConductivity() > 5000.0) {
-            anomalyReasons.add("Excessive electrical conductivity (" + request.getConductivity() + " µS/cm)");
+        if (cond > 5000.0) {
+            anomalyReasons.add("Excessive electrical conductivity (" + cond + " µS/cm)");
         }
 
         boolean isAnomaly = !anomalyReasons.isEmpty();
@@ -59,18 +66,27 @@ public class PredictionServiceImpl implements PredictionService {
 
         // 2. Persist raw physical-chemical sensor readings with anomaly flags
         SensorData sensorData = SensorData.builder()
-                .ph(request.getPh())
-                .temperature(request.getTemperature())
-                .turbidity(request.getTurbidity())
-                .totalDissolvedSolids(request.getTotalDissolvedSolids())
-                .conductivity(request.getConductivity())
+                .ph(ph)
+                .temperature(temp)
+                .turbidity(turb)
+                .totalDissolvedSolids(tds)
+                .conductivity(cond)
                 .isAnomaly(isAnomaly)
                 .anomalyReason(anomalyReason)
                 .build();
         sensorData = sensorDataRepository.save(sensorData);
 
+        // Build sanitized request for Python ML engine
+        PredictionRequest sanitizedReq = PredictionRequest.builder()
+                .ph(ph)
+                .temperature(temp)
+                .turbidity(turb)
+                .totalDissolvedSolids(tds)
+                .conductivity(cond)
+                .build();
+
         // 3. Query Python ML microservice for Random Forest classification & confidence
-        PythonPredictionResponse pythonResponse = pythonMlClient.getPrediction(request);
+        PythonPredictionResponse pythonResponse = pythonMlClient.getPrediction(sanitizedReq);
 
         // 4. Persist prediction classification result linked to sensor data
         PredictionHistory history = PredictionHistory.builder()

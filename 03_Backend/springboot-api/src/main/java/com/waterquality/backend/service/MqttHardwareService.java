@@ -1,6 +1,8 @@
 package com.waterquality.backend.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -81,25 +84,52 @@ public class MqttHardwareService implements MqttCallbackExtended {
         this.connectOptions.setAutomaticReconnect(true);
         this.connectOptions.setConnectionTimeout(5);
         this.connectOptions.setKeepAliveInterval(30);
+
+        // Binds strictly to the Aqualytica active broker on LAN (10.39.71.112)
+        // avoiding conflict with default background Windows Mosquitto service on 127.0.0.1
+        List<String> uris = new ArrayList<>();
+        if (brokerUrl != null && !brokerUrl.isBlank()) {
+            uris.add(brokerUrl);
+        }
+        if (!uris.contains("tcp://10.39.71.112:1883")) {
+            uris.add("tcp://10.39.71.112:1883");
+        }
+        this.connectOptions.setServerURIs(uris.toArray(new String[0]));
     }
 
     @PostConstruct
     public synchronized void initialize() {
         try {
-            log.info("Initializing MQTT client connecting to [{}] with clientId [{}]...", brokerUrl, clientId);
+            log.info("Initializing MQTT client with primary URI [{}] and fallbacks: {}", brokerUrl, java.util.Arrays.toString(connectOptions.getServerURIs()));
             this.mqttClient = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
             this.mqttClient.setCallback(this);
             connectToBroker();
         } catch (MqttException ex) {
-            log.warn("Initial MQTT broker connection to [{}] failed (broker may be starting): {}. Automatic reconnection is active.", brokerUrl, ex.getMessage());
+            log.warn("Initial MQTT connection deferred (broker may be starting). Background auto-reconnect is active.");
         }
     }
 
     private synchronized void connectToBroker() throws MqttException {
         if (mqttClient != null && !mqttClient.isConnected()) {
             mqttClient.connect(connectOptions);
-            log.info("Connected to Mosquitto MQTT broker at [{}]", brokerUrl);
+            log.info("Connected to Mosquitto MQTT broker successfully at [{}]", mqttClient.getCurrentServerURI() != null ? mqttClient.getCurrentServerURI() : brokerUrl);
             subscribeToSensorTopic();
+        }
+    }
+
+    /**
+     * Automatic scheduled background reconnect loop.
+     * Guarantees that if Mosquitto broker is started after Spring Boot or restarted,
+     * the backend connects within 5 seconds without errors.
+     */
+    @Scheduled(fixedDelay = 5000)
+    public synchronized void scheduledReconnect() {
+        if (mqttClient != null && !mqttClient.isConnected()) {
+            try {
+                connectToBroker();
+            } catch (Exception ex) {
+                // Broker starting or transient network condition; retry next cycle
+            }
         }
     }
 

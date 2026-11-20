@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PageWrapper from "../../components/common/PageWrapper";
+import ParameterReferencePanel from "../../components/handbook/ParameterReferencePanel";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown, Droplets, Wind, Layers, Zap, Thermometer,
@@ -473,7 +474,7 @@ const Handbook = () => {
   };
 
   return (
-    <PageWrapper className="space-y-8 max-w-5xl mx-auto pb-24">
+    <PageWrapper className="space-y-8 max-w-6xl mx-auto pb-24">
       {/* ── Hero Header ── */}
       <div className="relative bg-slate-900/30 backdrop-blur-3xl border border-slate-800/40 rounded-3xl p-8 sm:p-10 overflow-hidden">
         {/* Background gradient */}
@@ -504,8 +505,8 @@ const Handbook = () => {
           </div>
 
           <p className="text-sm text-slate-400 max-w-3xl leading-relaxed">
-            Tap any sensor below to explore what it measures, its safe and hazardous value ranges,
-            health impacts, ESP32 hardware details, calibration method, and the end-to-end measurement flow.
+            Explore statutory benchmark target ranges, WHO guidelines, and tap any sensor below to inspect
+            safe and hazardous value ranges, health impacts, ESP32 hardware details, calibration methods, and measurement flows.
           </p>
 
           {/* Summary strip */}
@@ -528,11 +529,18 @@ const Handbook = () => {
         </div>
       </div>
 
+      {/* ── Statutory Benchmark Reference & Parameter Target Ranges ── */}
+      <ParameterReferencePanel />
+
       {/* ── Expand/Collapse All ── */}
-      <div className="flex justify-end">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+        <div>
+          <h2 className="text-xl font-bold text-white tracking-tight">Sensor Hardware Deep Dive</h2>
+          <p className="text-xs text-slate-400 font-medium">Pinouts, calibration formulas, and physical signal conversion pipelines</p>
+        </div>
         <button
           onClick={toggleAll}
-          className="px-4 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/40 text-slate-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-2"
+          className="px-4 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/40 text-slate-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-2 self-start sm:self-auto shrink-0"
         >
           <ChevronDown size={14} className={`transition-transform ${allOpen ? "rotate-180" : ""}`} />
           {allOpen ? "Collapse All" : "Expand All"}

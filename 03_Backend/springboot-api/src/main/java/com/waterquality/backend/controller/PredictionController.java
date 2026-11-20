@@ -140,15 +140,19 @@ public class PredictionController {
         // Record heartbeat
         esp32StatusService.recordHeartbeat(clientIp, telemetry.getDeviceId() != null ? telemetry.getDeviceId() : "AQUALYTICA_ESP32", null);
 
-        boolean isTempValid = Boolean.TRUE.equals(telemetry.getTemperatureValid()) && telemetry.getTemperature() != null;
+        // Robust temperature check: valid if explicitly true OR (not explicitly false and within physical water bounds)
+        boolean isTempValid = (telemetry.getTemperatureValid() == null || Boolean.TRUE.equals(telemetry.getTemperatureValid()))
+                && telemetry.getTemperature() != null
+                && telemetry.getTemperature() >= -10.0
+                && telemetry.getTemperature() <= 70.0;
 
         if (!isTempValid) {
             LiveTestResponse faultResponse = LiveTestResponse.builder()
                     .ph(telemetry.getPh())
                     .temperature(telemetry.getTemperature())
                     .turbidity(telemetry.getTurbidity())
-                    .totalDissolvedSolids(telemetry.getTds())
-                    .conductivity(telemetry.getEc())
+                    .totalDissolvedSolids(telemetry.getEffectiveTds())
+                    .conductivity(telemetry.getEffectiveEc())
                     .temperatureValid(false)
                     .isHardwareFault(true)
                     .hardwareFaultReason("DS18B20 Temperature Sensor probe disconnected or invalid. Reading rejected to prevent ML distortion.")
@@ -166,23 +170,23 @@ public class PredictionController {
                     .build();
         }
 
-        // Temperature is valid: construct PredictionRequest and reuse existing predictionService
+        // Temperature is valid: construct sanitized PredictionRequest and reuse predictionService
         PredictionRequest request = PredictionRequest.builder()
-                .ph(telemetry.getPh())
+                .ph(telemetry.getPh() != null ? telemetry.getPh() : 7.2)
                 .temperature(telemetry.getTemperature())
-                .turbidity(telemetry.getTurbidity())
-                .totalDissolvedSolids(telemetry.getTds())
-                .conductivity(telemetry.getEc())
+                .turbidity(telemetry.getTurbidity() != null ? telemetry.getTurbidity() : 0.5)
+                .totalDissolvedSolids(telemetry.getEffectiveTds())
+                .conductivity(telemetry.getEffectiveEc())
                 .build();
 
         PredictionResponse predResponse = predictionService.predictWaterQuality(request);
 
         LiveTestResponse response = LiveTestResponse.builder()
-                .ph(telemetry.getPh())
-                .temperature(telemetry.getTemperature())
-                .turbidity(telemetry.getTurbidity())
-                .totalDissolvedSolids(telemetry.getTds())
-                .conductivity(telemetry.getEc())
+                .ph(request.getPh())
+                .temperature(request.getTemperature())
+                .turbidity(request.getTurbidity())
+                .totalDissolvedSolids(request.getTotalDissolvedSolids())
+                .conductivity(request.getConductivity())
                 .temperatureValid(true)
                 .isHardwareFault(false)
                 .hardwareFaultReason(null)
